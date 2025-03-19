@@ -1,0 +1,14 @@
+La gracia del framework esque gestioni tota la comunicació i nosaltres ens centrem en la logica, en que comuniquem.
+Pyro, ens permet exposar objectes i mètodes per cridar-los de forma remota.
+
+3 components:
+  - Daemont -> proces que escolta constantment i captura les crides.
+  - Proxy -> Intermediari que fa alguna cosa. Guarda una representació local dels objectes i mètodes (estat),
+  tenim instàncies i mètodes, pero no la implementació. Tenim els noms dels mètodes llavors podem fer una crida.
+  - Name Server -> Registra ens noms i instancia els mètodes.
+
+Beneficis:
+  - Tenim una invocació de mètodes transaprent.
+  - Desacoblament entre la localitat dels objectes i la comunicació. 1 té el codi i els altres es comuniquen
+  amb ell.
+
