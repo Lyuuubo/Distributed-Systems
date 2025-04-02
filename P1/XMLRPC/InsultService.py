@@ -3,70 +3,79 @@ from xmlrpc.server import SimpleXMLRPCRequestHandler
 import xmlrpc.client
 import random
 import time
-import threading
+import multiprocessing
 
-# Restrict to a particular path.
-class RequestHandler(SimpleXMLRPCRequestHandler):
-    rpc_paths = ('/RPC2',)
+class MyFuncs:
+    def __init__(self):
+        #self.manager = multiprocessing.Manager()
+        self.insult_list = [] #self.manager.list()
+        self.subscribers_list = [] #self.manager.list()
+        self.ip_list = []
+        self.process = None
 
-# Create server
-with SimpleXMLRPCServer(('localhost', 8000),
-                        requestHandler=RequestHandler) as server:
-    server.register_introspection_functions()
-
-    insult_list = []
-    subscribers_list = []
-    ip_list = []
-    thread = None
-
-    def send_insults(insult):
-        if insult in insult_list:
+    # Stores de insult in a list if not exist in
+    def send_insults(self, insult):
+        if insult in self.insult_list:
             return f'{insult} EXIST'
         else:
-            insult_list.append(insult)
+            self.insult_list.append(insult)
             return f'{insult} ADDED'
-    server.register_function(send_insults, "send_insults")
 
-    def get_insults():
-        return insult_list
-    server.register_function(get_insults, "get_insults")
+    # Return the list of insults
+    def get_insults(self):
+        return list(self.insult_list)
 
-    def insult_me():
-        return random.choice(insult_list)
-    server.register_function(insult_me, "insult_me")
+    # Return a random insult of the insult list
+    def insult_me(self):
+        return random.choice(self.insult_list)
 
-    def add_subscriber(subscriber):
-        s = xmlrpc.client.ServerProxy(subscriber)
-        if subscriber in ip_list:
+    # Adds a sucriber. He received the url.
+    def add_subscriber(self, subscriber):
+        #s = xmlrpc.client.ServerProxy(subscriber)
+        if subscriber in self.ip_list:
             return f'{subscriber} EXIST'
         else:
-            ip_list.append(subscriber)
-            subscribers_list.append(s)
+            self.ip_list.append(subscriber)
+            self.subscribers_list.append(subscriber)
             return f'{subscriber} ADDED' 
-    server.register_function(add_subscriber, "add_subscriber")
-        
-    def notify():
-        for subs in subscribers_list:
-            subs.notifySub(random.choice(insult_list))
-        time.sleep(5)
 
-    def notify_subscribers():
-        notify()
-        #if thread is None:
-         #   thread = threading.Thread(target=notify)
-          #  thread.start()
-           # return "Notification actived"
-        #else:
-         #   return "Notification is also actived"
-    server.register_function(notify_subscribers, "notify_subscribers")
+    def notify(self, insult_list, subscribers_list):
+        while True:
+            insult = random.choice(insult_list)
+            for subs in subscribers_list:
+                s = xmlrpc.client.ServerProxy(subs)
+                s.notifySub(insult)
+            time.sleep(5)
 
-    def stop_notify_subscribers():
-        if thread is not None:
-            thread.join()
-            return "Succes in stop notification"
+    # Notify all the subscribers
+    def notify_subscribers(self):
+        if self.process is None:
+            self.process = multiprocessing.Process(target=self.notify, args=(self.insult_list, self.subscribers_list,))
+            self.process.start()
+            return "Notification Actived"
         else:
-            return "Any notification is active"
-    server.register_function(stop_notify_subscribers, "stop_notify_subscribers")
-     
-    server.serve_forever()
+            return "Notification is also Actived"
+
+    # Stop the notification
+    def stop_notify_subscribers(self):
+        if self.process is not None:
+            self.process.terminate()
+            self.process.join()
+            self.process = None
+            return "Notification Desactived"
+        else:
+            return "Notification is also Desactived"
+
+# Create server
+if __name__ == "__main__":
+    # Restrict to a particular path.
+    class RequestHandler(SimpleXMLRPCRequestHandler):
+        rpc_paths = ('/RPC2',)
+        
+    with SimpleXMLRPCServer(('localhost', 8000),
+                        requestHandler=RequestHandler) as server:
+        server.register_introspection_functions()
+        server.register_instance(MyFuncs())
+        print("Server actived...")
+        server.serve_forever()
 
