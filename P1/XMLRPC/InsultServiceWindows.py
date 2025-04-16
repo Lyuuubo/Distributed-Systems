@@ -10,7 +10,6 @@ class MyFuncs:
         #self.manager = multiprocessing.Manager()
         self.insult_list = [] #self.manager.list()
         self.subscribers_list = [] #self.manager.list()
-        self.ip_list = []
         self.process = None
 
     # Stores de insult in a list if not exist in
@@ -32,10 +31,9 @@ class MyFuncs:
     # Adds a sucriber. He received the url.
     def add_subscriber(self, subscriber):
         #s = xmlrpc.client.ServerProxy(subscriber)
-        if subscriber in self.ip_list:
+        if subscriber in self.subscribers_list:
             return f'{subscriber} EXIST'
         else:
-            self.ip_list.append(subscriber)
             self.subscribers_list.append(subscriber)
             return f'{subscriber} ADDED' 
 

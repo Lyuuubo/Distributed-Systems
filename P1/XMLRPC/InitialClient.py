@@ -6,6 +6,8 @@ s = xmlrpc.client.ServerProxy('http://localhost:8000')
 # Print list of available methods
 #print(s.system.listMethods())
 print(s.send_insults("cap d'espinaca"))
+print(s.send_insults("Kevin"))
+print(s.send_insults("Satxa"))
 print(s.send_insults("tonto"))
 print(s.send_insults("moolt tonto"))
 print(s.send_insults("perro"))
