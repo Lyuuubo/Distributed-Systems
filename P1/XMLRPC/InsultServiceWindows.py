@@ -47,6 +47,8 @@ class MyFuncs:
 
     # Notify all the subscribers
     def notify_subscribers(self):
+        if not self.subscribers_list:
+            return "Not Subscribers Registered"
         if self.process is None:
             self.process = multiprocessing.Process(target=self.notify, args=(self.insult_list, self.subscribers_list,))
             self.process.start()
