@@ -15,5 +15,10 @@ Segons exercici (EX2):
     Coses importants:
     - InsultFilter es un servei que disposa de funcions de consumidor i productor, en aquest cas, dintrem un client que estara continuament enviant feina a una cua interna del servei i un altre client que consumira continuament aquestes dades.
     - De moment, només ho estem tractant amb un únic node, llavors no necessitem una cua compartida com redis. Usem collections.deque.
+    - Per el client, únicament tenim un fitxer on es pot sel·leccionar que es vol fer.
+
+    Estructura:
+    - ClientInsult.py
+    - InsultFilter.py
     
 
