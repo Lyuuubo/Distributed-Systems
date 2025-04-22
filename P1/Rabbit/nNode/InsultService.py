@@ -25,36 +25,12 @@ def getInsult(ch, method, properties, body):
         body=str(response),
     )
 
-def notify(list):
-    print(f"Notify subscribers...")
-    client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-    insults = client_redis.lrange('insult_list', 0, -1)
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-    channel = connection.channel()
-    while True:
-        insult = random.choice(insults)
-        channel.basic_publish(exchange='notify_subs', routing_key='', body=insult)
-        print(f" [x] Sent '{insult}'")
-        time.sleep(5)
-
 def startBroadcast():
-    global broadcast_active
-    if broadcast_active is None:
-        broadcast_active = multiprocessing.Process(target=notify, args=(insult_list,))
-        broadcast_active.start()
-        print ("Broadcast Actived")
-    else:
-        print ("Broadcast is also Actived")
+    channel.basic_publish(exchange='', routing_key='broadcast_queue', body='start')
 
 def stopBroadcast():
-    global broadcast_active
-    if broadcast_active is not None:
-        broadcast_active.terminate()
-        broadcast_active.join()
-        broadcast_active = None
-        print ("Broadcast Desactived")
-    else:
-        print ("Broadcast is also Desactived")
+    channel.basic_publish(exchange='', routing_key='broadcast_queue', body='stop')
+    
 
 # Define the callback function
 def callback(ch, method, properties, body):
@@ -81,8 +57,8 @@ if __name__ == "__main__":
     # Declare a queue (ensure it exists)
     channel.queue_declare(queue='request_queue')
 
-    # Declare a fanout exchange
-    channel.exchange_declare(exchange='notify_subs', exchange_type='fanout')
+    # Declare a queue
+    channel.queue_declare(queue='broadcast_queue')
 
     # Consume messages
     channel.basic_consume(queue='request_queue', on_message_callback=callback, auto_ack=True)
