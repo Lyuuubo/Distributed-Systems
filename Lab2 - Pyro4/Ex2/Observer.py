@@ -12,5 +12,5 @@ if __name__ == '__main__':
     obj = Pyro4.Proxy(uri)
     obs = daemon.register(Observer)
     print(obj.addObserver(obs))
-    #obj.notifyObservers("Perro")
+    obj.notifyObservers("Perro")
     daemon.requestLoop()
