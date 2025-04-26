@@ -11,6 +11,7 @@ class InsultService:
         self.subscribers = []
         self.thread = None
         self.stop = threading.Event()
+        self.process = None
            
     def add_insults(self, insult):
         if insult not in self.insults:

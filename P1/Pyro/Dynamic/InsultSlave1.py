@@ -1,7 +1,7 @@
 import Pyro4
 import time
 import json
-import threading
+from multiprocessing import Process
 from InsultService import InsultService
 
 @Pyro4.expose   
@@ -9,7 +9,6 @@ from InsultService import InsultService
 class InsultSlave(InsultService):
 
     def __init__(self, id):
-        self.petitions_queue = []
         self.id = id
         super().__init__()
 
@@ -21,19 +20,20 @@ class InsultSlave(InsultService):
         server = Pyro4.Proxy(uri)
 
         print("Sending information to master...")
-        # We proceed to do the hearbeat 
+        # We proceed to do the hearbeat, to notify to the master server that the slave is still connected
         while True:
             raw_slave_data = {
                 "id" : self.id,
-                "data" : len(self.petitions_queue)
+                "pulse" : time.time()
             }
             server.heartbeat_slave(json.dumps(raw_slave_data))
             time.sleep(5)
 
 # We initialize the heartbeat
 slave = InsultSlave(id=1)
-thread = threading.Thread(target=slave.send_info, daemon=True)
-thread.start()
+p = Process(target=slave.send_info)
+p.start()
+
 
 # We register the slave for the client to connect to it
 daemon = Pyro4.Daemon(host='localhost')
