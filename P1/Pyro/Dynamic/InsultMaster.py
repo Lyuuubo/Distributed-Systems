@@ -9,6 +9,7 @@ class InsultMaster:
 
     def __init__(self, shared_slave_list):
         self.slave_list = shared_slave_list
+        self.next_id = 0
 
     def get_resolver_slave(self):
 
@@ -16,8 +17,7 @@ class InsultMaster:
         sorted_by_time = dict(sorted(self.slave_list.items(), key=lambda item: item[1]["last_seen"]))
         filtered_by_time = {k: v for k, v in sorted_by_time.items() if v["active"] is True}
         slave_keys = list(filtered_by_time.keys())
-        print(slave_keys)
-        return (slave_keys.index(0))
+        return (slave_keys[0])
 
     def heartbeat_slave(self, raw_slave_data):
 
@@ -41,10 +41,16 @@ class InsultMaster:
             for slave in list(self.slave_list.keys()): 
                 # Check if the last pulse was 10 seconds ago
                 if now - self.slave_list[slave]["last_seen"] > timeout:
-                    temp = self.slave_list[slave]  
-                    temp["active"] = False         
-                    self.slave_list[slave] = temp
-            #print(self.slave_list.keys())
+                    self.slave_list.pop(slave)
+                    
+
+    def next_identifier(self):
+        if len(self.slave_list) < 3:
+            self.next_id = self.next_id + 1
+            return self.next_id
+        else:
+            return None
+        
 
 # We share the dictionary for the slave process
 manager = Manager()

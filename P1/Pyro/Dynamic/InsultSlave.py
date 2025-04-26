@@ -8,8 +8,11 @@ from InsultService import InsultService
 @Pyro4.behavior(instance_mode="single")
 class InsultSlave(InsultService):
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self):
+        ns = Pyro4.locateNS(host='localhost', port=9090)
+        uri = ns.lookup('master.service')
+        server = Pyro4.Proxy(uri)
+        self.id = server.next_identifier()
         super().__init__()
 
     def send_info(self):
@@ -30,16 +33,19 @@ class InsultSlave(InsultService):
             time.sleep(5)
 
 # We initialize the heartbeat
-slave = InsultSlave(id=1)
-p = Process(target=slave.send_info)
-p.start()
-
+slave = InsultSlave()
 
 # We register the slave for the client to connect to it
-daemon = Pyro4.Daemon(host='localhost')
-ns = Pyro4.locateNS(host='localhost', port=9090)
-uri = daemon.register(InsultSlave)
-ns.register('insult.service', uri)
-print(f"Server uri: {uri}")
+if slave.id is not None:
+    daemon = Pyro4.Daemon(host='localhost')
+    ns = Pyro4.locateNS(host='localhost', port=9090)
+    uri = daemon.register(slave)
+    print(slave.id)
+    ns.register("insult" + str(slave.id) + ".service", uri)
+    print(f"Server uri: {uri}")
+    p = Process(target=slave.send_info)
+    p.start()
+    daemon.requestLoop()
+else:
+    print("You cannot instance another slave")
 
-daemon.requestLoop()

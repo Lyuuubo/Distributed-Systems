@@ -1,70 +1,49 @@
-import Pyro4    
+import Pyro4   
+import redis 
 import random
-import time
-import threading
 
 @Pyro4.expose   
-@Pyro4.behavior(instance_mode="single")
 class InsultService:
     def __init__(self):
-        self.insults = []
-        self.subscribers = []
-        self.thread = None
-        self.stop = threading.Event()
-        self.process = None
+        self.client = redis.Redis(host = 'localhost', port = 6379, db = 0, decode_responses = True)
+        self.insult_list = "insult_list"
+        self.subscriber_list = "subscriber_list"
            
-    def add_insults(self, insult):
-        if insult not in self.insults:
-            self.insults.append(insult)
+    def add_insult(self, insult):
+        if insult not in self.get_insults():
+            print(f"Adding new insult {insult}")
+            self.client.lpush(self.insult_list, insult)
     
-    def add_subscriber(self, subscriber):
-        if subscriber not in self.subscribers:
-            self.subscribers.append(subscriber)
-            print(f"New subsriber {subscriber}")
-        return subscriber
-        
-    def notify_server(self, insult):
-        for subscriber in self.subscribers:
-            sub = Pyro4.Proxy(subscriber)
-            print(f"Insult sent {sub.notify(insult)}")
-        return 'recived message'
-
-    def remove_subscriber(self, subscriber):
-        if subscriber in self.subscribers:
-            self.subsribers.remove(subscriber)
-
-    def notify(self, insult):
-        self.add_insults(insult)
-
-    def  get_insults(self):
-        return self.insults
+    def remove_insult(self, insult):
+        if insult in self.get_insults():
+            print(f"Removing insult {insult}")
+            self.insult_list.lrem(self.insult_list, 0, insult)
     
-    def random_insult(self):
-        return random.choice(self.insults)
+    
+    def add_subscriber(self, uri):
+        if uri not in self.get_subscribers():
+            print(f"Adding new subscriber {uri}")
+            self.client.lpush(self.subscriber_list, uri)
+
+    def remove_subscriber(self, uri):
+        if uri in self.get_subscribers():
+            print(f"Removing subscriber {uri}")
+            self.client.lrem(self.subscriber_list, 0, uri)
+
+    def notify_sub(self, message):
+        print(f"Message recieved: {message}")
+
+    def clean_insults(self):
+        self.client.ltrim(self.insult_list, 1, 0)
+
+    def clean_subscribers(self):
+        self.client.ltrim(self.subscriber_list, 1, 0)
+
+    def random_choice(self):
+        return random.choice(self.get_insults())
+
+    def get_insults(self):
+        return self.client.lrange(self.insult_list, 0, -1)
     
     def get_subscribers(self):
-        return self.subsribers
-    
-    def random_events(self):
-        if self.thread is None or not self.thread.is_alive():
-            self.stop.clear()
-            self.thread = threading.Thread(target=self.auxiliar_random_events, daemon=True)
-            self.thread.start()
-            return 'random events activated'
-        return 'already running'
-
-    def auxiliar_random_events(self):
-        while not self.stop.is_set():
-            if self.subscribers and self.insults:
-                for subscriber in self.subscribers:
-                    sub = Pyro4.Proxy(subscriber)
-                    print(f"Insult sent {sub.notify(self.random_insult())}")
-            time.sleep(5)
-
-    def kill_random_events(self):
-        if self.thread and self.thread.is_alive():
-            self.stop.set()
-            self.thread.join()
-            self.thread = None
-            return 'random events stopped'
-        return 'no thread running'
+        return self.client.lrange(self.subscriber_list, 0, -1)
