@@ -14,5 +14,5 @@ i = 0
 while True:
     print(f"Produce message {i}")
     channel.basic_publish(exchange='', routing_key='queue_prova', body=f"Hola {i}")
-    time.sleep(1)
+    time.sleep(0.5)
     i = i+1

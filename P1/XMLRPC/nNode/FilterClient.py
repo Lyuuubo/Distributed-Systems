@@ -2,7 +2,11 @@ import xmlrpc.client
 import time
 import random
 
-s = xmlrpc.client.ServerProxy('http://localhost:8000')
+master = xmlrpc.client.ServerProxy('http://localhost:8000')
+url = master.connect_to_node()
+print(f'Connect to: {url}')
+
+s = xmlrpc.client.ServerProxy(url)
 
 message_list = ['hola tonto','que tal','com estas','que feo ets deu meu',"cap d'espinaca",
                 'dema a jugar a futbol gordo','fes el treball inutil','ves a passejar perro']
@@ -11,7 +15,7 @@ print('1 -> Producer')
 print('2 -> Consumer')
 print('3 -> See work_queue')
 print('4 -> See result_queue')
-option = input("Choise: ")
+option = input("Choice: ")
 
 if option == '1':
     print('Producer:')

@@ -6,8 +6,9 @@ import time
 
 def notify():
     print(f"Notify subscribers...")
-    client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-    insults = client_redis.lrange('insult_list', 0, -1)
+    # client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+    # insults = client_redis.lrange('insult_list', 0, -1)
+    insults = ['tonto', 'inutil', "cap d'espicana", 'cavero', 'gordo', 'feo', 'perro']
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
     while True:
