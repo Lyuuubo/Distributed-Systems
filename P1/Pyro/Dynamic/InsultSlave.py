@@ -1,12 +1,11 @@
 import Pyro4
 import time
 import json
-from multiprocessing import Process
-from InsultService import InsultService
+from InsultFather import InsultFather
 
 @Pyro4.expose   
 @Pyro4.behavior(instance_mode="single")
-class InsultSlave(InsultService):
+class InsultSlave(InsultFather):
 
     def __init__(self):
         ns = Pyro4.locateNS(host='localhost', port=9090)
@@ -27,24 +26,9 @@ class InsultSlave(InsultService):
         while True:
             raw_slave_data = {
                 "id" : self.id,
-                "pulse" : time.time()
+                "pulse" : time.time(),
+                "is_filter" : self.is_filter
             }
             server.heartbeat_slave(json.dumps(raw_slave_data))
-            time.sleep(5)
+            time.sleep(3)
 
-# We initialize the heartbeat
-slave = InsultSlave()
-
-# We register the slave for the client to connect to it
-if slave.id is not None:
-    daemon = Pyro4.Daemon(host='localhost')
-    ns = Pyro4.locateNS(host='localhost', port=9090)
-    uri = daemon.register(slave)
-    print(slave.id)
-    ns.register("insult" + str(slave.id) + ".service", uri)
-    print(f"Server uri: {uri}")
-    p = Process(target=slave.send_info)
-    p.start()
-    daemon.requestLoop()
-else:
-    print("You cannot instance another slave")

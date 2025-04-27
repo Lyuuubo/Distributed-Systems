@@ -1,4 +1,5 @@
 import Pyro4
+import time
 
 @Pyro4.expose
 class InsultClient:
@@ -15,7 +16,7 @@ slave = Pyro4.Proxy(uri)
 
 slave.clean_subscribers()
 client = daemon.register(InsultClient)
-print(slave.add_subscriber(client))
+slave.add_subscriber(client)
 
 slave.clean_insults()
 slave.add_insult("Fiumba")

@@ -4,16 +4,18 @@ import random
 import base64
 from multiprocessing import Process, Manager
 from InsultBroadcast import InsultBroadcast
+from InsultFather import InsultFather
 
 
 @Pyro4.expose   
-class InsultService:
+class InsultService(InsultFather):
 
     def __init__(self):
         self.client = redis.Redis(host = 'localhost', port = 6379, db = 0, decode_responses = True)
         self.insult_list = "insult_list"
         self.subscriber_list = "subscriber_list"
         self.p = None
+        super().__init__(False)
            
     # We define a function to store an insult that is not in the redis database
     def add_insult(self, insult):

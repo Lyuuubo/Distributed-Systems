@@ -18,3 +18,5 @@ time.sleep(10)
 print(slave.kill_broadcast())
 print(slave.kill_broadcast())
 print(slave.get_insults())
+
+daemon.requestLoop()
