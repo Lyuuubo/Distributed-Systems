@@ -13,12 +13,19 @@ class MyFuncs:
         self.process = None
 
     # Stores de insult in a list if not exist in
-    def send_insults(self, insult):
+    def send_insult(self, insult):
         if insult in self.insult_list:
             return f'{insult} EXIST'
         else:
             self.insult_list.append(insult)
             return f'{insult} ADDED'
+        
+    def remove_insult(self, insult):
+        if insult in self.insult_list:
+            self.insult_list.remove(insult)
+            return f'{insult} REMOVED'
+        else:
+            return f'{insult} NOT EXIST'
 
     # Return the list of insults
     def get_insults(self):
@@ -28,7 +35,7 @@ class MyFuncs:
     def insult_me(self):
         return random.choice(self.insult_list)
 
-    # Adds a sucriber. He received the url.
+    # Adds a subscriber. He received the url.
     def add_subscriber(self, subscriber):
         #s = xmlrpc.client.ServerProxy(subscriber)
         if subscriber in self.subscribers_list:
@@ -36,6 +43,15 @@ class MyFuncs:
         else:
             self.subscribers_list.append(subscriber)
             return f'{subscriber} ADDED' 
+        
+    # Adds a subscriber. He received the url.
+    def remove_subscriber(self, subscriber):
+        #s = xmlrpc.client.ServerProxy(subscriber)
+        if subscriber in self.subscribers_list:
+            self.subscribers_list.remove(subscriber)
+            return f'{subscriber} REMOVED'
+        else:
+            return f'{subscriber} NOT EXIST' 
 
     def notify(self, insult_list, subscribers_list):
         while True:
@@ -65,6 +81,16 @@ class MyFuncs:
             return "Notification Desactived"
         else:
             return "Notification is also Desactived"
+    
+    # Restart server
+    def reset(self):
+        self.insult_list = []
+        self.subscribers_list = []
+        if self.process is not None:
+            self.process.terminate()
+            self.process.join()
+            self.process = None
+        return 'OK'
 
 # Create server
 if __name__ == "__main__":
@@ -72,7 +98,7 @@ if __name__ == "__main__":
     class RequestHandler(SimpleXMLRPCRequestHandler):
         rpc_paths = ('/RPC2',)
         
-    with SimpleXMLRPCServer(('localhost', 8000),
+    with SimpleXMLRPCServer(('localhost', 8200),
                         requestHandler=RequestHandler) as server:
         server.register_introspection_functions()
         server.register_instance(MyFuncs())

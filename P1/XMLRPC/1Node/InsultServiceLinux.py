@@ -14,12 +14,19 @@ class MyFuncs:
         self.process = None
 
     # Stores de insult in a list if not exist in
-    def send_insults(self, insult):
+    def send_insult(self, insult):
         if insult in self.insult_list:
             return f'{insult} EXIST'
         else:
             self.insult_list.append(insult)
             return f'{insult} ADDED'
+    
+    def remove_insult(self, insult):
+        if insult in self.insult_list:
+            self.insult_list.remove(insult)
+            return f'{insult} REMOVED'
+        else:
+            return f'{insult} NOT EXIST'
 
     # Return the list of insults
     def get_insults(self):

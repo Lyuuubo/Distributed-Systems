@@ -33,6 +33,11 @@ class MyFuncs:
 
     def obtain_work_queue(self):
         return list(self.work_queue)
+    
+    def reset(self):
+        self.work_queue = deque()
+        self.result_queue = deque()
+        return 'OK'
 
 # Create server
 if __name__ == "__main__":
@@ -40,7 +45,7 @@ if __name__ == "__main__":
     class RequestHandler(SimpleXMLRPCRequestHandler):
         rpc_paths = ('/RPC2',)
         
-    with SimpleXMLRPCServer(('localhost', 8000),
+    with SimpleXMLRPCServer(('localhost', 8300),
                         requestHandler=RequestHandler) as server:
         server.register_introspection_functions()
         server.register_instance(MyFuncs())
