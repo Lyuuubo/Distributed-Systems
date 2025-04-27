@@ -4,10 +4,8 @@ import random
 import time
 
 def storeInsult(insult):
-    # insults = client_redis.lrange(resultList, 0, -1)
     if insult not in insult_list:
         insult_list.append(insult)
-        # client_redis.lpush(resultList, insult)
         print(f"Save insult: {insult}")
     else:
         print(f"Insult ({insult}) is already in the list")

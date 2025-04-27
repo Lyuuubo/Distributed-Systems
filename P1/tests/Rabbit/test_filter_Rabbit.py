@@ -2,7 +2,12 @@ import unittest
 import pika
 import redis
 import time
+from collections import Counter
 
+# We need active:
+# - 1Node/InsultFilter.py
+# or
+# - nNode/InsultFilter.py (2 or more)
 class TestFilterRabbit(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -32,8 +37,7 @@ class TestFilterRabbit(unittest.TestCase):
             self.channel.basic_publish(exchange='', routing_key=self.queue, body=msg)
         time.sleep(0.5)
         result = self.client.lrange(self.redis_queue, 0, -1)
-        print(result)
-        assert result == self.result
+        assert Counter(result) == Counter(self.result)
                 
     @classmethod
     def tearDownClass(self):

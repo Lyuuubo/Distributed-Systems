@@ -1,6 +1,9 @@
 import unittest
 import xmlrpc.client
+from collections import Counter
 
+# We need active:
+# - 1Node/InsultFilter.py
 class TestFilterXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -21,7 +24,7 @@ class TestFilterXMLRPC(unittest.TestCase):
 
     def test_2_see_work_queue(self):
         response = self.service.obtain_work_queue()
-        assert response == self.messages
+        assert Counter(response) == Counter(self.messages)
 
     def test_3_consume_work(self):
         for msg,res in zip(self.messages,self.result):
@@ -34,7 +37,7 @@ class TestFilterXMLRPC(unittest.TestCase):
 
     def test_5_see_result_queue(self):
         response = self.service.obtain_result_queue()
-        assert response == self.result
+        assert Counter(response) == Counter(self.result)
 
     @classmethod
     def tearDownClass(self):

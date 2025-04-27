@@ -2,7 +2,11 @@ import unittest
 import time
 import random
 import xmlrpc.client
+from collections import Counter
 
+# We need active:
+# - 1Node/InsultServiceWindows.py
+# - 1Node/s1.py (s2 and s3 also)
 class TestServiceXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -20,7 +24,7 @@ class TestServiceXMLRPC(unittest.TestCase):
 
     def test_2_get_insults(self):
         response = self.service.get_insults()
-        assert response == self.insults
+        assert Counter(response) == Counter(self.insults)
 
     def test_3_insult_me(self):
         response = self.service.insult_me()

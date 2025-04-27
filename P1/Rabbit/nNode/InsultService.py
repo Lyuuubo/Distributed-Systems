@@ -47,7 +47,6 @@ def callback(ch, method, properties, body):
 
 if __name__ == "__main__":
     insult_list = "insult_list"
-    broadcast_active = None
 
     # Connect to RabbitMQ
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -55,13 +54,13 @@ if __name__ == "__main__":
     client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
     # Declare a queue (ensure it exists)
-    channel.queue_declare(queue='request_queue')
+    channel.queue_declare(queue='request_queue_n')
 
     # Declare a queue
     channel.queue_declare(queue='broadcast_queue')
 
     # Consume messages
-    channel.basic_consume(queue='request_queue', on_message_callback=callback, auto_ack=True)
+    channel.basic_consume(queue='request_queue_n', on_message_callback=callback, auto_ack=True)
 
     print("Consumer")
     print(' [*] Waiting for messages. To exit, press CTRL+C')
