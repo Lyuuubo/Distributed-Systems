@@ -1,7 +1,7 @@
 import unittest
 import xmlrpc.client
 
-class TestFilter(unittest.TestCase):
+class TestFilterXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.messages = [

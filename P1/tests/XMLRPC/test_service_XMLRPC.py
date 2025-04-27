@@ -3,7 +3,7 @@ import time
 import random
 import xmlrpc.client
 
-class TestService(unittest.TestCase):
+class TestServiceXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.insults = ['Tonto','Perro','Feo','Rata']

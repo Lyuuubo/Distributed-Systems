@@ -14,7 +14,7 @@ def storeInsult(insult):
 
 def getInsult(ch, method, properties, body):
     response = random.choice(insult_list)
-    print(f"Sent {response}")
+    print(f"Send {response}")
     
     # Return response to client
     ch.basic_publish(
@@ -30,7 +30,7 @@ def notify(list):
     while True:
         insult = random.choice(list)
         channel.basic_publish(exchange='notify_subs', routing_key='', body=insult)
-        print(f" [x] Sent '{insult}'")
+        print(f" [x] Send '{insult}'")
         time.sleep(5)
 
 def startBroadcast():
@@ -52,6 +52,16 @@ def stopBroadcast():
     else:
         print ("Broadcast is also Desactived")
 
+def getInsultList(ch, method, properties, body):
+    print(f"Send {insult_list}")
+    
+    # Return response to client
+    ch.basic_publish(
+        exchange='',
+        routing_key=properties.reply_to,
+        body=str(insult_list),
+    )
+
 # Define the callback function
 def callback(ch, method, properties, body):
     value = body.decode()
@@ -62,6 +72,8 @@ def callback(ch, method, properties, body):
         startBroadcast()
     elif value == 'X3':
         stopBroadcast()
+    elif value == 'X4':
+        getInsultList(ch, method, properties, body)
     else:
         storeInsult(value)
 
