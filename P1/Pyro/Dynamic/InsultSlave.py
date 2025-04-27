@@ -48,4 +48,3 @@ if slave.id is not None:
     daemon.requestLoop()
 else:
     print("You cannot instance another slave")
-
