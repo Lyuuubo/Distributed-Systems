@@ -59,7 +59,7 @@ class InsultMaster:
         # We check if the slave is new, if that's the case we set number_petition variable to zero
         if slave_id not in self.slave_list:
             self.slave_list[slave_id] = {
-            "last_seen": time.time(),
+            "last_seen": slave_pulse,
             "is_filter": is_filter,
             "number_petitions" : 0
             }
