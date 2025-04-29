@@ -15,10 +15,17 @@ class InsultMaster:
     def get_resolver_slave(self):
 
         # We return the id of the oldest pulse of the slave actived that we recieved 
-        sorted_by_time = dict(sorted(self.slave_list.items(), key=lambda item: item[1]["last_seen"]))
-        filtered_by_service = {k: v for k, v in sorted_by_time.items() if v["is_filter"] is False}
+        sorted_by_petitions_time = dict(sorted(self.slave_list.items(), key=lambda item: (item[1]["number_petitions"], item[1]["last_seen"])))
+        filtered_by_service = {k: v for k, v in sorted_by_petitions_time.items() if v["is_filter"] is False}
         slave_keys = list(filtered_by_service.keys())
         if slave_keys:
+
+            # Updating the number petitions of the slave 
+            tmp = self.slave_list[slave_keys[0]]
+            tmp["number_petitions"] = tmp["number_petitions"] + 1
+            self.slave_list[slave_keys[0]] = tmp
+
+            # We return the id of the slave
             return slave_keys[0]
         else:
             return None
@@ -26,10 +33,17 @@ class InsultMaster:
     def get_resolver_filter(self):
 
         # We return the id of the oldest pulse of the slave actived that we recieved 
-        sorted_by_time = dict(sorted(self.slave_list.items(), key=lambda item: item[1]["last_seen"]))
-        filtered_by_service = {k: v for k, v in sorted_by_time.items() if v["is_filter"] is True}
+        sorted_by_petitions_time = dict(sorted(self.slave_list.items(), key=lambda item: (item[1]["number_petitions"], item[1]["last_seen"])))
+        filtered_by_service = {k: v for k, v in sorted_by_petitions_time.items() if v["is_filter"] is True}
         slave_keys = list(filtered_by_service.keys())
         if slave_keys:
+            
+            # Updating the number petitions of the slave 
+            tmp = self.slave_list[slave_keys[0]]
+            tmp["number_petitions"] = tmp["number_petitions"] + 1
+            self.slave_list[slave_keys[0]] = tmp
+
+            # We return the id of the slave
             return slave_keys[0]
         else:
             return None
@@ -42,27 +56,33 @@ class InsultMaster:
         slave_pulse = int(slave_data["pulse"])
         is_filter = bool(slave_data["is_filter"])
 
-        # We register that the slave is still active
-        self.slave_list[slave_id] = {
+        # We check if the slave is new, if that's the case we set number_petition variable to zero
+        if slave_id not in self.slave_list:
+            self.slave_list[slave_id] = {
             "last_seen": time.time(),
             "is_filter": is_filter,
-        }
+            "number_petitions" : 0
+            }
+
+        # We only update the last_seen variable if the slave is still active
+        else: 
+            tmp = self.slave_list[slave_id]
+            tmp["last_seen"] = slave_pulse
+            self.slave_list[slave_id] = tmp
 
         # We check if the pulse comes from a filter service
         if is_filter:
             # If that's the case we register it to the filter list
             self.filter_list[slave_id] = self.slave_list[slave_id]
 
-        print(self.slave_list)
-
-    def check_slave(self, timeout=5):
+    def check_slave(self, timeout=10):
         while True:
             time.sleep(1)
             now = time.time()
 
             # For each slave registered
             for slave in list(self.slave_list.keys()): 
-                # Check if the last pulse was 5 seconds ago
+                # Check if the last pulse was 10 seconds ago
                 if now - self.slave_list[slave]["last_seen"] > timeout:
                     self.slave_list.pop(slave)
                     

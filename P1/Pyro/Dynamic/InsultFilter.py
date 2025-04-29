@@ -12,10 +12,12 @@ class InsultFilter(InsultFather):
         self.resolve_list = "resolve_list"
         super().__init__(True)
 
+    # We define a fuction to sotre new filter petitions
     def add_petition(self, message):
         print(f"Adding new petition {message}")
         self.client.lpush(self.petition_list, message)
 
+    # We define a function to resolve the oldest petition stored
     def resolve_petition(self):
         petition = self.client.lpop(self.petition_list)
         if petition is not None:
@@ -28,9 +30,11 @@ class InsultFilter(InsultFather):
         else:
             print("No job to be done")
 
+    # We define a function to retrieve all the resolutions stored
     def retrieve_resolutions(self):
         return self.client.lrange(self.resolve_list, 0, -1)
     
+    # We define a function to clean the redis list that store the resolutions
     def clean_resolutions(self):
         self.client.ltrim(self.resolve_list, 1, 0)
 

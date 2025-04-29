@@ -1,6 +1,4 @@
 import Pyro4
-import time
-import json
 from multiprocessing import Process
 from InsultService import InsultService
 from InsultSlave import InsultSlave
