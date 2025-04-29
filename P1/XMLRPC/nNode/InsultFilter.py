@@ -11,7 +11,7 @@ class MyFuncs:
         self.client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
     def produce_work(self, message):
-        self.client_redis.lpush(self.work_queue, message)
+        self.client_redis.rpush(self.work_queue, message)
         print(f"Produce work: {message}")
         return f"Produce work: {message}"
     
@@ -25,7 +25,7 @@ class MyFuncs:
                     text = work.replace(insult, "CENSORED")
                     break
             print(text)
-            self.client_redis.lpush(self.result_queue, text)  
+            self.client_redis.rpush(self.result_queue, text)  
             return f'Consume work: {work} -> {text}'
         else: return 'Any work in the queue'
 
@@ -36,6 +36,11 @@ class MyFuncs:
     def obtain_work_queue(self):
         work = self.client_redis.lrange(self.work_queue, 0, -1)
         return work
+    
+    def reset(self):
+        self.client_redis.ltrim(self.result_queue, 1, 0)
+        self.client_redis.ltrim(self.work_queue, 1, 0)
+        return "OK"
 
 # Create server
 if __name__ == "__main__":

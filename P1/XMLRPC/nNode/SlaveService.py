@@ -7,7 +7,6 @@ import redis
 class MyFuncs:
     def __init__(self, insult_l):
         self.insult_list = insult_l
-        self.process = None
         self.broadcast = xmlrpc.client.ServerProxy('http://localhost:8001')
         self.client_redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
@@ -50,6 +49,12 @@ class MyFuncs:
         response =  self.broadcast.stop_subscribers()
         print(response)
         return response
+    
+    def reset(self):
+        print(' [!] Reset')
+        self.broadcast.reset()
+        self.client_redis.ltrim(self.insult_list, 1, 0)
+        return "OK"
 
 # Create server
 if __name__ == "__main__":
