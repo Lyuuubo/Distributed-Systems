@@ -21,7 +21,7 @@ class InsultBroadcast:
             for uri in subscriber_list:
                 subscriber = base64.urlsafe_b64decode(uri).decode('utf-8')
                 subscriber = Pyro4.Proxy(subscriber)
-                subscriber.notify_sub(random.choice(insult_list))
+                subscriber.notify(random.choice(insult_list))
             time.sleep(5)
 
 

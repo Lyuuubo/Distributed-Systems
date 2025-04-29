@@ -25,8 +25,8 @@ class InsultMaster:
             tmp["number_petitions"] = tmp["number_petitions"] + 1
             self.slave_list[slave_keys[0]] = tmp
 
-            # We return the id of the slave
-            return slave_keys[0]
+            # We return the url of the slave service
+            return "insult" + str(slave_keys[0]) + ".service"
         else:
             return None
         
@@ -43,8 +43,8 @@ class InsultMaster:
             tmp["number_petitions"] = tmp["number_petitions"] + 1
             self.slave_list[slave_keys[0]] = tmp
 
-            # We return the id of the slave
-            return slave_keys[0]
+            # We return the url of the filter service
+            return "insult" + str(slave_keys[0]) + ".service"
         else:
             return None
 
@@ -59,9 +59,9 @@ class InsultMaster:
         # We check if the slave is new, if that's the case we set number_petition variable to zero
         if slave_id not in self.slave_list:
             self.slave_list[slave_id] = {
-            "last_seen": slave_pulse,
-            "is_filter": is_filter,
-            "number_petitions" : 0
+                "last_seen": slave_pulse,
+                "is_filter": is_filter,
+                "number_petitions" : 0
             }
 
         # We only update the last_seen variable if the slave is still active

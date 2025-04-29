@@ -12,7 +12,7 @@ class InsultFilter(InsultFather):
         self.resolve_list = "resolve_list"
         super().__init__(True)
 
-    # We define a fuction to sotre new filter petitions
+    # We define a fuction to store new filter petitions
     def add_petition(self, message):
         print(f"Adding new petition {message}")
         self.client.lpush(self.petition_list, message)

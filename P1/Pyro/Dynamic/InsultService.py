@@ -22,6 +22,9 @@ class InsultService(InsultFather):
         if insult not in self.get_insults():
             print(f"Adding new insult {insult}")
             self.client.lpush(self.insult_list, insult)
+            return f"Adding new insult {insult}"
+        print(f"The {insult} is already stored")
+        return f"The {insult} is already stored"
     
     # We define a function that removes an insult that is in the redis database
     def remove_insult(self, insult):
@@ -35,17 +38,23 @@ class InsultService(InsultFather):
         # We use base64 encode import to add new subcribers because redis doesn't acces uri 
         byte_uri = str(uri).encode('utf-8')
         encoded_uri = base64.urlsafe_b64encode(byte_uri)
-        if encoded_uri not in self.get_subscribers():
-            print(f"Adding new subscriber {uri}")
+        if encoded_uri.decode('utf-8') not in self.get_subscribers():
             self.client.lpush(self.subscriber_list, encoded_uri)
+            print(f"Adding new subscriber {uri}")
+            return f"Adding new subscriber {uri}"
+        print (f"The subscriber {uri} is already stored")
+        return f"The subscriber {uri} is already stored"
 
     # We define a function to remove a subscriber from redis
     def remove_subscriber(self, uri):
         byte_uri = str(uri).encode('utf-8')
         encoded_uri = base64.urlsafe_b64encode(byte_uri)
-        if encoded_uri in self.get_subscribers():
-            print(f"Removing subscriber {uri}")
+        if encoded_uri.decode('utf-8') in self.get_subscribers():
             self.client.lrem(self.subscriber_list, 0, encoded_uri)
+            print(f"Removing subscriber {uri}")
+            return f"Removing subscriber {uri}"
+        print(f"The subscriber {uri} is already removed")
+        return f"The subscriber {uri} is already removed"
 
     # We define a function to clean all insults
     def clean_insults(self):
@@ -54,6 +63,7 @@ class InsultService(InsultFather):
 
     # We define a function to clean all subscribers
     def clean_subscribers(self):
+        print("Cleaning all subscribers on redis")
         self.client.ltrim(self.subscriber_list, 1, 0)
 
     # We define a function that returns a random insult from the storage

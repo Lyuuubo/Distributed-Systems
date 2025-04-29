@@ -15,22 +15,26 @@ class InsultService:
     def add_insults(self, insult):
         if insult not in self.insults:
             self.insults.append(insult)
+            return f"Added insult: {insult}"
+        return f"{insult} already exists"
+
+    def remove_insult(self, insult):
+        if insult in self.insults:
+            self.insults.remove(insult)
+            return f"Removed insult: {insult}"
+        return f"{insult} not registered"
     
     def add_subscriber(self, subscriber):
         if subscriber not in self.subscribers:
             self.subscribers.append(subscriber)
-            print(f"New subsriber {subscriber}")
-        return subscriber
-        
-    def notify_server(self, insult):
-        for subscriber in self.subscribers:
-            sub = Pyro4.Proxy(subscriber)
-            print(f"Insult sent {sub.notify(insult)}")
-        return 'recived message'
-
+            return f"New subscriber {subscriber}"
+        return f"Subscriber already added: {subscriber}"
+    
     def remove_subscriber(self, subscriber):
         if subscriber in self.subscribers:
-            self.subsribers.remove(subscriber)
+            self.subscribers.remove(subscriber)
+            return f"Removed subscriber {subscriber}"
+        return f"Subscriber already removed: {subscriber}"
 
     def notify(self, insult):
         self.add_insults(insult)
@@ -56,7 +60,7 @@ class InsultService:
         while not self.stop.is_set():
             if self.subscribers and self.insults:
                 for subscriber in self.subscribers:
-                    sub = Pyro4.Proxy(subscriber)
+                    sub = Pyro4.Proxy("PYRONAME:"+subscriber)
                     print(f"Insult sent {sub.notify(self.random_insult())}")
             time.sleep(5)
 
