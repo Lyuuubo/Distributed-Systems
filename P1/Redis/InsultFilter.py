@@ -9,23 +9,29 @@ class InsultFilter:
         self.petition_queue = "petition_queue"
         self.resolve_queue = "resolve_queue"
     
+    # We define a function to store filter petitions from clients
     def add_petition(self, petition):
         self.client.lpush(self.petition_queue, petition)
+        print(f"Adding new petition: {petition}")
 
+    # We define a function to resolve one a petition
     def resolve_petition(self):
-        _, petition = self.client.blpop(self.petition_queue, timeout=0)
+        _, petition = self.client.brpop(self.petition_queue, timeout=0)
         insults = self.client.lrange("insult_queue", 0, -1)
         print(insults)
         for insult in insults:
             if insult in petition:
                 petition = petition.replace(insult, "CENSORED")
-                break
-        print(petition)
         self.client.lpush(self.resolve_queue, petition)
+        print(f"Resolved petition: {petition}")
+        return f"Resolved petition: {petition}"
     
+    # We define a function to retrieve all the resolutions
     def retrieve_resolutions(self, client):
+        print("Retriving all resolutions")
         self.client.lpush(client, *self.get_resolve_queue())
 
+    # We define a functino to get all the resolutions (this function is meant to be private)
     def get_resolve_queue(self):
         return self.client.lrange(self.resolve_queue, 0, -1)
     
@@ -33,7 +39,7 @@ filter = InsultFilter()
 
 while True:
     print("Waiting for petitions to be filtered")
-    _, raw_data = filter.client.blpop(filter.filter_queue, timeout=0)
+    _, raw_data = filter.client.brpop(filter.filter_queue, timeout=0)
     print("Petition recieved")
     petition = json.loads(raw_data)
 

@@ -8,30 +8,37 @@ class InsultService:
     
     def __init__(self):
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
-        self.insult_queue = "insult_queue"              #Insult queue for the insult server (the redis clients won't have acces to it)
-        self.channel_queue = "insult_channel"           #This is the channel where all the redis clients will access to recieve the broadcast
-        self.petitions_queue = "petitions_queue"        #This is the queue where all the petitions from the clients will be stored
+        self.insult_queue = "insult_queue"              
+        self.channel_queue = "insult_channel"           
+        self.petitions_queue = "petitions_queue"        
         self.process = None
 
-    def add_insult(self, insult):
-        insult_list = self.get_insults()                
-        if insult not in insult_list:                   
-            print(f"Adding {insult}")
-            self.client.lpush(self.insult_queue, insult)                     
+    # We define a function to add insults to our redis
+    def add_insult(self, insult):      
+        if insult not in self.get_insults():                   
+            self.client.lpush(self.insult_queue, insult)        
+            print(f"Adding {insult}")  
+        else:
+            print(f"The {insult} already exists")       
 
+    # We define a function to remove an existing insult on our redis
     def remove_insult(self, insult):
-        insult_list = self.get_insults()
-        if insult in insult_list:
-            print(f"Removing {insult}")
+        if insult in self.get_insults():
             self.client.lrem(self.insult_queue, 0, insult)
+            print(f"Removing {insult}")
+        else:
+            print(f"The {insult} has already been removed")
     
+    # We define a function to retrieve all the insults that are stored in our redis
     def retrieve_insults(self, client):
+        print("Retrieving all insults on redis")
         self.client.lpush(client, *self.get_insults())
 
+    # We define a function to send to the client a random insult
     def random_insult(self):
-        insult_list = self.get_insults()
-        return random.choice(insult_list)
+        return random.choice(self.get_insults())
     
+    # We define a broadcast function where we send one random insult to each master subscriber
     def random_events(self, stop):
         insult_list = self.get_insults()
         while not stop.is_set():
@@ -40,15 +47,16 @@ class InsultService:
                 print(f"Publishing {insult}")
                 self.client.publish(self.channel_queue, insult)
                 time.sleep(5)
-
-    def get_insults(self):
-            return self.client.lrange(self.insult_queue, 0, -1)
     
+    # We define a function that returns all insults that are stored in our redis db 
+    def get_insults(self):
+        return self.client.lrange(self.insult_queue, 0, -1)
+        
 service = InsultService()
 
 while True:
     print("Waiting for petitions...")
-    _, raw_data = service.client.blpop(service.petitions_queue, timeout=0)
+    _, raw_data = service.client.brpop(service.petitions_queue, timeout=0)
     print("Petition recived")
     petition = json.loads(raw_data)
 

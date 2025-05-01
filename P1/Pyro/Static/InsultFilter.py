@@ -3,40 +3,48 @@ import re
 
 @Pyro4.expose
 class InsultFilter:
-    def __init__(self, uri):
+    def __init__(self):
         self.petitions = []
         self.resolutions = []
-        self.insult_list = []
-        self.insult_server = uri
+        daemon = Pyro4.Daemon(host='localhost')
+        ns = Pyro4.locateNS(host='localhost', port=9090)
+        self.insult_server = ns.lookup('insult.service')
     
-    def add_petitions(self, message):
-        if message not in self.petitions:
-            print(f"Adding new message {message}")
-            self.petitions.append(message)
+    def add_petition(self, message):
+        self.petitions.append(message)
+        print(f"Adding new message {message}")
+        return f"Adding new message {message}"
+    
+    def get_petitions(self):
+        print("Returing to the client the petitions that are currently on the db")
+        return self.petitions
 
-    def resolve_petitions(self):
-        message = self.petitions.pop()
-        self.insult_list = self.get_insult_list(self.insult_server)
-        res = ""
-        for word in re.split(r'[,.:;!?¡¿\s]+', message):
-            if word in self.insult_list:
-                aux_word = "CENSORED"
-                res += aux_word + " "
-            else:
-                res += word + " "
-        self.resolutions.append(res.strip())
-        return res
+    def resolve_petition(self):
+        if len(self.petitions) > 0:
+            message = self.petitions.pop(0)
+            for insult in self.get_insult_list():
+                if insult in message:
+                    message = message.replace(insult, "CENSORED")
+            self.resolutions.append(message)
+            print(f"Resolution done: {message}")
+            return f"Resolution done: {message}"
+        else:
+            print("No job to be done")
+            return "No job to be done"
 
-    def get_insult_list(self, server):
-        server = Pyro4.Proxy(server)
+    def get_insult_list(self):
+        server = Pyro4.Proxy(self.insult_server)
         insult_list = server.get_insults()
         return insult_list
+    
+    def get_resolutions(self):
+        print("Returning to client the resolutions")
+        return self.resolutions
     
 daemon = Pyro4.Daemon(host='localhost')
 ns = Pyro4.locateNS(host='localhost', port=9090)
 uri = ns.lookup('insult.service')
-insult_filter = InsultFilter(uri)
-filter = daemon.register(insult_filter)
+filter = daemon.register(InsultFilter())
 ns.register('insult.filter', filter)
 print(f"Server uri {uri}")
 print(f"Filter uri {filter}")
