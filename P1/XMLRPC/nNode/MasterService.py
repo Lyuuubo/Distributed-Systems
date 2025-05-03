@@ -21,14 +21,22 @@ class MyFuncs:
 
     # Return the url of a node
     def connect_to_node(self):
-        url = self.nodes.popleft()
-        self.nodes.append(url)
-        print(f" [>] Return Node: {url}")
-        return url
+        if len(self.nodes) > 0:
+            url = self.nodes.popleft()
+            self.nodes.append(url)
+            print(f" [>] Return Node: {url}")
+            return url
+        else: return "Any Node is active"
     
     def get_urls(self):
         print(f" [>] Return URL's queue")
         return list(self.nodes)
+    
+    def reset(self):
+        print(' [!] Reset')
+        s = xmlrpc.client.ServerProxy(self.nodes[0])
+        s.reset()
+        return "OK"
 
 # Create server
 if __name__ == "__main__":

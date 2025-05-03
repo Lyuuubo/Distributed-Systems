@@ -53,6 +53,12 @@ class MyFuncs:
         else:
             print(" [*] Notification is also Desactived")
             return "Notification is also Desactived"
+        
+    def reset(self):
+        print(' [!] Reset')
+        self.subscribers_list = []
+        self.process = None
+        return "OK"
 
 # Create server
 if __name__ == "__main__":
