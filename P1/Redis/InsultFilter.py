@@ -18,13 +18,11 @@ class InsultFilter:
     def resolve_petition(self):
         _, petition = self.client.brpop(self.petition_queue, timeout=0)
         insults = self.client.lrange("insult_queue", 0, -1)
-        print(insults)
         for insult in insults:
             if insult in petition:
                 petition = petition.replace(insult, "CENSORED")
         self.client.lpush(self.resolve_queue, petition)
         print(f"Resolved petition: {petition}")
-        return f"Resolved petition: {petition}"
     
     # We define a function to retrieve all the resolutions
     def retrieve_resolutions(self, client):

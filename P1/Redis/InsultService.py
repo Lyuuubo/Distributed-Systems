@@ -53,7 +53,7 @@ class InsultService:
         return self.client.lrange(self.insult_queue, 0, -1)
         
 service = InsultService()
-
+service.client.ltrim("petitions_queue", 1, 0)
 while True:
     print("Waiting for petitions...")
     _, raw_data = service.client.brpop(service.petitions_queue, timeout=0)

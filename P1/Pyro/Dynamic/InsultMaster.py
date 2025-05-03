@@ -102,7 +102,7 @@ daemon = Pyro4.Daemon(host='localhost')
 ns = Pyro4.locateNS(host='localhost', port=9090)
 uri = daemon.register(master)
 ns.register('master.service', uri)
-print(f"Server uri: {uri}")
+print(f"Master uri: {uri}")
 
 # We create the process of check_slave to verify if the slaves are still alive
 p = Process(target=master.check_slave)
