@@ -25,11 +25,11 @@ class Master:
         rate = q2.method.message_count - q1.method.message_count
 
         # Obtain event consumed by workers in 1 second
-        temps = [float(x) for x in self.redis.lrange("temps_queue", 0, -1)]
+        temps = [float(x) for x in self.redis.lrange("time_queue", 0, -1)]
         temps_sum = sum(temps) 
         if len(temps) != 0 and temps_sum != 0.0:
             self.C = 1/(temps_sum/len(temps))
-            self.redis.ltrim("temps_queue", 1, 0)
+            self.redis.ltrim("time_queue", 1, 0)
 
         # Obtain the number of events in the queue
         q1 = channel.queue_declare(queue=self.work, passive=True)
