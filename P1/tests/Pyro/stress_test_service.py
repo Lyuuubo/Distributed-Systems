@@ -6,6 +6,9 @@ import statistics
 import matplotlib.pyplot as plt
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
+# We need active:
+# - ActiveServer.py
+# - InsultFilter.py / InsultSlaveService.py
 
 # We define the data that we will be using on the test phase
 client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)

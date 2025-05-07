@@ -101,7 +101,7 @@ master = InsultMaster(shared_slave_list)
 daemon = Pyro4.Daemon(host='localhost')
 ns = Pyro4.locateNS(host='localhost', port=9090)
 uri = daemon.register(master)
-ns.register('insult.service', uri)
+ns.register('master.service', uri)
 print(f"Master uri: {uri}")
 
 # We create the process of check_slave to verify if the slaves are still alive

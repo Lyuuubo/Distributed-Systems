@@ -8,6 +8,7 @@ from collections import Counter
 # - ActiceServer.py
 # - InsultClient.py
 # - Static/InsultService.py
+
 class TestServicePyro(unittest.TestCase):
     
     @classmethod

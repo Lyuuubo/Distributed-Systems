@@ -9,7 +9,7 @@ class InsultSlave(InsultFather):
 
     def __init__(self):
         ns = Pyro4.locateNS(host='localhost', port=9090)
-        uri = ns.lookup('insult.service')
+        uri = ns.lookup('master.service')
         server = Pyro4.Proxy(uri)
         self.id = server.next_identifier()
         super().__init__()
@@ -18,7 +18,7 @@ class InsultSlave(InsultFather):
 
         # We establish the connection with the master server
         ns = Pyro4.locateNS(host='localhost', port=9090)
-        uri = ns.lookup('insult.service')
+        uri = ns.lookup('master.service')
         server = Pyro4.Proxy(uri)
 
         print("Sending information to master...")

@@ -18,7 +18,7 @@ class TestServicePyro(unittest.TestCase):
 
         # We select the master name server to do the testing
         ns = Pyro4.locateNS(host='localhost', port=9090)
-        uri = ns.lookup('insult.service')
+        uri = ns.lookup('master.service')
         self.server = Pyro4.Proxy(uri)
 
     def test_1_add_insult(self):
