@@ -6,7 +6,7 @@ from collections import Counter
 
 # We need active:
 # - ActiceServer.py
-# - InsultClient.py
+# - InsultClientService.py
 # - Static/InsultService.py
 
 class TestServicePyro(unittest.TestCase):

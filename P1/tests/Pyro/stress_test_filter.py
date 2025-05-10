@@ -25,7 +25,7 @@ petitions = [
     "Gracias por tu ayuda con el proyecto, fue muy valiosa."
 ]
 
-number_process = [100, 300, 600]
+number_process = [1000, 300, 600]
 time_taken = []
 max_workers = 50  
 
