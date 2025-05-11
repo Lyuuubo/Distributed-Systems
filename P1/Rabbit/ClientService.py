@@ -28,6 +28,7 @@ time.sleep(20)
 message = 'X3'
 channel.basic_publish(exchange='', routing_key='request_queue', body=message)
 print(f" [x] Sent '{message}'")
+
 for i in range(9):
     message = 'X1'
     channel.basic_publish(exchange='', 

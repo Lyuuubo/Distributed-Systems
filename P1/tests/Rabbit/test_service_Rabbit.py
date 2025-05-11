@@ -5,7 +5,7 @@ import time
 
 # We need active:
 # - 1Node/InsultService.py
-# - 1Node/Subscriber.py (1 or more)
+# - Subscriber.py (1 or more)
 class TestServiceRabbit(unittest.TestCase):
     @classmethod
     def setUpClass(self):
