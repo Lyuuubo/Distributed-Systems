@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import threading
 
 # We need active (active in order):
-# - 1Node/InsultServiceWindows.py
+# - 1Node/InsultServiceLinux.py
 class StressTestService:
     def __init__(self):
         # Define data needed to do the test
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     plt.plot(test.number_process, test.message_process, 'b-', label='Real')
     plt.xlabel('Clients')
     plt.ylabel('Messages')
+    plt.title('Stress Test XMLRPC')
     plt.legend()
     plt.grid(True)
     plt.show()

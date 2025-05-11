@@ -5,10 +5,6 @@ import redis
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 
-# Connect to Redis
-client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-
-redis_queue = 'result_queue'
 queue_name = 'insult_filter_queue'
 
 # Declare new rabbit queue
@@ -22,7 +18,7 @@ def callback(ch, method, properties, body):
             if insult in text:
                 text = text.replace(insult, "CENSORED")
                 break
-    print(f" [x] Received {text}")
+    #print(f" [x] Received {text}")
 
     # Return response to client
     ch.basic_publish(

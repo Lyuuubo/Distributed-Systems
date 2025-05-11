@@ -5,7 +5,7 @@ import xmlrpc.client
 from collections import Counter
 
 # We need active:
-# - 1Node/InsultServiceWindows.py
+# - 1Node/InsultServiceLinux.py
 # - 1Node/s1.py (s2 and s3 also)
 class TestServiceXMLRPC(unittest.TestCase):
     @classmethod
