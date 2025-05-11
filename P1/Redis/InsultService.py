@@ -4,13 +4,15 @@ import time
 import json
 from multiprocessing import Process, Manager, Event
 
+
 class InsultService:
     
     def __init__(self):
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
+        self.instance_id = self.client.incr("insult_service_instance_id")
         self.insult_queue = "insult_queue"              
         self.channel_queue = "insult_channel"           
-        self.petitions_queue = "petitions_queue"        
+        self.petitions_queue = f"petitions_queue{self.instance_id}"        
         self.process = None
 
     # We define a function to add insults to our redis
@@ -53,11 +55,11 @@ class InsultService:
         return self.client.lrange(self.insult_queue, 0, -1)
         
 service = InsultService()
-service.client.ltrim("petitions_queue", 1, 0)
+service.client.ltrim(service.petitions_queue, 1, 0)
+print(service.petitions_queue)
+print("Waiting for petitions...")
 while True:
-    print("Waiting for petitions...")
     _, raw_data = service.client.brpop(service.petitions_queue, timeout=0)
-    print("Petition recived")
     petition = json.loads(raw_data)
 
     operation = petition["operation"]

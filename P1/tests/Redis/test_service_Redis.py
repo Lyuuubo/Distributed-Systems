@@ -19,7 +19,7 @@ class TestServiceRedis(unittest.TestCase):
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
 
         # We initialize the petition queue
-        self.petition_queue = "petitions_queue"
+        self.petition_queue = "petitions_queue1"
 
     def test_1_add_insult(self):
         for insult in self.insults:

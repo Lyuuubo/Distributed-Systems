@@ -1,88 +1,57 @@
-import redis
+import Pyro4
 import time
-import statistics
-import random
-import json
-from concurrent.futures import ThreadPoolExecutor
-import matplotlib.pyplot as plt
+import multiprocessing
+from matplotlib import pyplot as plt
 
-# We define the data that we will be using on the test phase
-client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-insults = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
-number_process = [50, 100, 200, 300, 400]
-time_taken = []
-max_workers = 50  
-client.ltrim("petitions_queue", 1, 0)
+service_names = []
+insult_list = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
+number_petitions = [1000, 2000, 3000, 4000, 5000]
+max_cpu = 4
 
-# We define a function to make the stress test, this function is going to call add_insult from both structures
-def add_insult_remotely():
-    insult = random.choice(insults)
-    petition = {
-        "operation": "X1",
-        "data": insult
-    }
-    client.lpush("petitions_queue", json.dumps(petition))
+# We retrieve insults for all the number of petitions that the client indicates
+def insult_getter(number_petitions, counter, block):
+    pass
 
-# We define a function to run the test
-def run_test(nodes):
-    print(f"Stress test for {nodes} node(s)")
-    results = []
+# We define a function to do the testing
+def run_tests(number_petitions, number_process):
+    counter = multiprocessing.Value('i', 0)
+    block = multiprocessing.Lock()
+    process = []
+
+    start = time.time()
+
+    for _ in range(number_process):  
+        p = multiprocessing.Process(target=insult_getter, args=(number_petitions, counter, block))
+        process.append(p)
+        p.start()
+
+    for p in process:
+        p.join()
+
+    elapsed = time.time() - start
+
+    print(f"Time elapsed {elapsed}")
+
+    return elapsed
+
+if __name__ == "__main__":
     
-    for count in number_process:
-        start = time.time()
+    nodes = 3
+
+    results = {}
+
+    # We run the tests
+
+    for service in range(nodes):
         
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [executor.submit(add_insult_remotely) for _ in range(count)]
-            for future in futures:
-                future.result()  # Asegura que todas las tareas se han completado
-        
-        elapsed = time.time() - start
-        results.append(elapsed)
-        print(f"Elapsed: {elapsed:.3f}s")
-    
-    average = statistics.mean(results)
-    time_taken.append(average)
+        # We define a list for each service
+        results[service] = []
 
-# We deploy the test
-run_test(1)
-run_test(2)
-run_test(3)
+        for petition in number_petitions:
+            print(f"Testing for {service + 1} node(s) and {petition} petitions...")
+            time_elapsed = run_tests(petition, max_cpu)
+            results[service].append(time_elapsed)
 
-# We procide to treat the data and generate the plot
-speedup = [1, time_taken[0] / time_taken[1], time_taken[0] / time_taken[2]]
-workers = [1, 2, 3]
 
-print("Time taken:", time_taken)
-print("Speedup:", speedup)
 
-# Plot definition
-plt.figure(figsize=(8, 5))
-markerline, stemlines, baseline = plt.stem(
-    workers, speedup,
-    linefmt='b-',  # Line color (blue)
-    markerfmt='bo',  # Marker style (blue circle)
-    basefmt='k-',  # Baseline color (black)
-    label='Measured Speedup'
-)
 
-# Customize spikes (optional: make them thicker)
-plt.setp(stemlines, linewidth=2)
-
-# Add ideal speedup line (linear scaling)
-plt.plot(workers, workers, 'r--', label='Ideal Speedup')
-
-# Labels and title
-plt.xlabel('Number of Workers', fontsize=12)
-plt.ylabel('Speedup', fontsize=12)
-plt.title('Speedup vs Number of Workers', fontsize=14)
-
-# Grid and ticks
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.xticks(workers)
-plt.yticks([i * 1.0 for i in range(0, int(max(speedup)) + 2)])
-
-# Legend
-plt.legend()
-
-# Show the plot
-plt.show()

@@ -12,7 +12,7 @@ class InsultService:
         self.thread = None
         self.stop = threading.Event()
            
-    def add_insults(self, insult):
+    def add_insult(self, insult):
         if insult not in self.insults:
             self.insults.append(insult)
             return f"Added insult: {insult}"
@@ -42,7 +42,7 @@ class InsultService:
     def  get_insults(self):
         return self.insults
     
-    def random_insult(self):
+    def random_choice(self):
         return random.choice(self.insults)
     
     def get_subscribers(self):

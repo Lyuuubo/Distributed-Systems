@@ -5,6 +5,9 @@ import time
 import json
 from collections import Counter
 
+# Before testing:
+# - CleanIdentifier.py
+
 # We need active:
 # - InsultService.py (at least one instance)
 # - InsultFilter.py (at least one instance)
@@ -19,7 +22,7 @@ class TestFilterRedis(unittest.TestCase):
         # We initialize the redis client that we will be using on the functional tests bellow
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
 
-        self.client.delete("insult_queue", "filter_queue", "resolve_queue", "test_filter_queue", "petitions_queue")
+        self.client.delete("insult_queue", "resolve_queue", "test_filter_queue", "petitions_queue1", "filter_queue2")
 
         time.sleep(1)
 
@@ -28,10 +31,10 @@ class TestFilterRedis(unittest.TestCase):
                 "operation" : "X1",
                 "data" : insult
             }
-            self.client.lpush("petitions_queue", json.dumps(petition))
+            self.client.lpush("petitions_queue1", json.dumps(petition))
 
         # We initialize the petition queue
-        self.filter_queue = "filter_queue"
+        self.filter_queue = "filter_queue2"
 
         # We initialize some petitions with the insults above
         self.petitions = [
@@ -82,7 +85,7 @@ class TestFilterRedis(unittest.TestCase):
         time.sleep(1)
         resolutions = self.client.lrange("test_filter_queue", 0, -1)
         assert Counter(resolutions) == Counter(self.resolutions)
-        self.client.delete("test_service_queue")
+        self.client.delete("test_filter_queue")
         
 
     @classmethod

@@ -23,7 +23,7 @@ class TestFilterPyro(unittest.TestCase):
 
         # We register all insults to filter some petitions
         for insult in self.insults:
-            self.server.add_insults(insult)
+            self.server.add_insult(insult)
 
         # We initialize some petitions with the insults above
         self.petitions = [

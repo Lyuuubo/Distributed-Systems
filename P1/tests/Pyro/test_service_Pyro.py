@@ -24,10 +24,10 @@ class TestServicePyro(unittest.TestCase):
 
     def test_1_add_insult(self):
         for insult in self.insults:
-            response = self.server.add_insults(insult)
+            response = self.server.add_insult(insult)
             assert response == f"Added insult: {insult}"
         insult = random.choice(self.insults)
-        response = self.server.add_insults(insult)
+        response = self.server.add_insult(insult)
         assert response == f"{insult} already exists"
 
     def test_2_get_insults(self):
@@ -35,7 +35,7 @@ class TestServicePyro(unittest.TestCase):
         assert Counter(response) == Counter (self.insults)
 
     def test_3_insult_me(self):
-        response = self.server.random_insult()
+        response = self.server.random_choice()
         assert response in self.insults
 
     def test_4_remove_insult(self):
@@ -60,7 +60,7 @@ class TestServicePyro(unittest.TestCase):
         assert response == f"Subscriber already removed: {client}"
 
     def test_7_notify_subscriber(self):
-        self.server.add_insults(random.choice(self.insults))
+        self.server.add_insult(random.choice(self.insults))
         client = "insult.client"
         self.server.add_subscriber(client)
         response = self.server.random_events()

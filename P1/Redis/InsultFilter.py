@@ -5,7 +5,8 @@ class InsultFilter:
     
     def __init__(self):
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
-        self.filter_queue = "filter_queue"
+        self.instance_id = self.client.incr("insult_service_instance_id")
+        self.filter_queue = f"filter_queue{self.instance_id}"
         self.petition_queue = "petition_queue"
         self.resolve_queue = "resolve_queue"
     
@@ -34,9 +35,8 @@ class InsultFilter:
         return self.client.lrange(self.resolve_queue, 0, -1)
     
 filter = InsultFilter()
-
+print("Waiting for petitions to be filtered")
 while True:
-    print("Waiting for petitions to be filtered")
     _, raw_data = filter.client.brpop(filter.filter_queue, timeout=0)
     print("Petition recieved")
     petition = json.loads(raw_data)
