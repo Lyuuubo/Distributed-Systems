@@ -1,6 +1,7 @@
 import Pyro4
 import time
 import multiprocessing
+import statistics
 from itertools import cycle
 from matplotlib import pyplot as plt
 
@@ -89,6 +90,38 @@ if __name__ == "__main__":
             time_elapsed = run_tests(petition, max_cpu)
             results[service].append(time_elapsed)
 
+    for i in range(3):
+        plt.plot(number_petitions, results[i], label=f"{i + 1} Nodes")
+    
+    plt.xlabel("Petitions")
+    plt.ylabel("Time")
+    plt.title("Test Stress Redis")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
+    speedup = [1, results[0][4] / results[1][4], results[0][4] / results[2][4]]
+    print(speedup)
+    workers = [1, 2, 3]
 
+    plt.figure(figsize=(8, 5))
+    markline, stemlines, baselline = plt.stem(
+        workers, speedup, 
+        linefmt='b-',
+        markerfmt='bo-',
+        basefmt='k-',
+        label='Measeured Speedup'
+    )
 
+    plt.setp(stemlines, linewidth=2)
+
+    plt.plot(workers, workers, 'r--', label='Ideal Speedup')
+
+    plt.xlabel("Number of Workers")
+    plt.ylabel("Speedup")
+    plt.title("Speedup vs Number of Workers", fontsize=14)
+
+    plt.grid(True)
+    plt.legend()
+    plt.show()
