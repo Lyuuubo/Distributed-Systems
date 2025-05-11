@@ -5,8 +5,12 @@ import time
 import json
 from collections import Counter
 
+# Before testing:
+# - CleanIdentifier.py
+
 # We need active:
-# - InsultService.py (at least one instance)
+# - InsultService.py (only one instance needed)
+
 class TestServiceRedis(unittest.TestCase):
 
     @classmethod

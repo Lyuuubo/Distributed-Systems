@@ -11,6 +11,7 @@ from collections import Counter
 # We need active:
 # - InsultService.py (at least one instance)
 # - InsultFilter.py (at least one instance)
+
 class TestFilterRedis(unittest.TestCase):
 
     @classmethod

@@ -9,6 +9,7 @@ from collections import Counter
 # - InsultClientMaster.py
 # - Dynamic/InsultMaster.py
 # - Dynamic/InsultSlaveService.py (1 or more)
+
 class TestServicePyro(unittest.TestCase):
 
     @classmethod

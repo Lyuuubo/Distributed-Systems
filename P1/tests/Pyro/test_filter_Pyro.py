@@ -6,6 +6,7 @@ from collections import Counter
 # - ActiceServer.py
 # - Static/InsultService.py
 # - Static/InsultFilter.py
+
 class TestFilterPyro(unittest.TestCase):
 
     @classmethod

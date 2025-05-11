@@ -19,9 +19,10 @@ class InsultService:
     def add_insult(self, insult):      
         if insult not in self.get_insults():                   
             self.client.lpush(self.insult_queue, insult)        
-            print(f"Adding {insult}")  
+            #print(f"Adding {insult}")  
         else:
-            print(f"The {insult} already exists")       
+            pass
+            #print(f"The {insult} already exists")       
 
     # We define a function to remove an existing insult on our redis
     def remove_insult(self, insult):
@@ -89,5 +90,5 @@ while True:
                 print("Broadcast is not active")
 
         case _:
-            print("Non existing operation")
+            pass
     

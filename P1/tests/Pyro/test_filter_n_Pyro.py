@@ -7,6 +7,7 @@ from collections import Counter
 # - Dynamic/InsultMaster.py
 # - Dynamic/InsultSlaveService.py (at least 1 to add some insults to the db)
 # - Dynamic/InsultSlaveFilter.py (1 or more)
+
 class TestFilterPyro(unittest.TestCase):
 
     @classmethod
