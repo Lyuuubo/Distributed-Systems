@@ -11,23 +11,7 @@ class StressTestService:
         self.number_process = 4
         self.consumer_rate = []
         self.time_stamp = []
-        self.lock = multiprocessing.Lock()
-        self.count = multiprocessing.Value("i", 0)
         self.requests = [1000, 2000, 5000, 10000, 20000, 50000, 100000]#, 50000, 100000, 200000, 500000]
-
-    def count_msg(self, response_queue, request):
-        request = request * self.number_process
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-        channel = connection.channel()
-
-        def callback(ch, method, properties, body):
-            with self.lock: self.count.value += 1
-
-        channel.basic_consume(queue=response_queue, on_message_callback=callback, auto_ack=True)
-        while True:
-            connection.process_data_events()
-            print(self.count)
-            if self.count.value >= request: break
 
     def send_insult(self, requests, i):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -36,7 +20,7 @@ class StressTestService:
         channel.queue_declare(queue='insult_filter_queue')
 
         # Declare response queue
-        response = channel.queue_declare(queue=f'')
+        response = channel.queue_declare(queue='')
         response_queue = response.method.queue
 
         for _ in range(requests):

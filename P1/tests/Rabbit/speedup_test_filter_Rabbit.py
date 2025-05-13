@@ -9,7 +9,7 @@ from pathlib import Path
 # - 1Node/InsultFilterTT.py
 class StressTestService:
     def __init__(self):
-        self.number_process = 4
+        self.number_process = 1
         self.consumer_rate = []
         self.requests = 100000
         self.path_worker = Path(__file__).parent.parent.parent/'Rabbit'/'nNode'/'InsultFilterTT.py'

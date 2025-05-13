@@ -1,5 +1,7 @@
-import time
+from MasterV1 import Master
 
-for _ in range(10):
-    print("Raul Gay")
-    time.sleep(1)
+if __name__ == '__main__':
+    work_queue = 'work_queue_v1'
+    count_queue = 'count_queue_v1'
+    master = Master(work_queue, count_queue)
+    master.start_managing(10)

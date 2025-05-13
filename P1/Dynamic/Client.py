@@ -8,15 +8,21 @@ channel = connection.channel()
 
 # Declare exchange
 channel.exchange_declare(exchange='master_queue', exchange_type='fanout')
-messages = ["Hola", "Que tal", "Que passa", "Tinc gana", "Mec mec"]
+messages = "Hola tonto"
+
+# Declare response queue
+response = channel.queue_declare(queue='')
+response_queue = response.method.queue
 
 print("TextProducer")
 while True:
     # Publish a message
-    insult = random.choice(messages)
-    channel.basic_publish(exchange='master_queue', routing_key='', body=insult)
-    print(f" [x] Send {insult}")
-    time.sleep(0.01)
+    channel.basic_publish(exchange='master_queue', 
+                          routing_key='', 
+                          properties=pika.BasicProperties(reply_to=response_queue),
+                          body=messages)
+    #print(f" [x] Send {insult}")
+    time.sleep(0.0035)
 
 # Close connection
 connection.close()
