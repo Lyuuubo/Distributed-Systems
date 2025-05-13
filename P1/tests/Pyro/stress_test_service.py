@@ -95,14 +95,13 @@ if __name__ == "__main__":
     
     plt.xlabel("Petitions")
     plt.ylabel("Time")
-    plt.title("Test Stress Redis")
+    plt.title("Test Stress Pyro")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
     plt.show()
 
     speedup = [1, results[0][4] / results[1][4], results[0][4] / results[2][4]]
-    print(speedup)
     workers = [1, 2, 3]
 
     plt.figure(figsize=(8, 5))

@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
 service_queues = []
 insult_list = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
-number_petitions = [10000, 20000, 30000, 40000, 50000]
+number_petitions = [1000, 2000, 3000, 4000, 5000]
 max_cpu = 4
 
 def petition_queues(nodes):
@@ -91,4 +91,37 @@ if __name__ == "__main__":
             time_elapsed = run_tests(petition, max_cpu)
             results[service].append(time_elapsed)
 
-    print(results)
+    for i in range(3):
+        plt.plot(number_petitions, results[i], label=f"{i + 1} Nodes")
+    
+    plt.xlabel("Petitions")
+    plt.ylabel("Time")
+    plt.title("Test Stress Redis")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    speedup = [1, results[0][4] / results[1][4], results[0][4] / results[2][4]]
+    workers = [1, 2, 3]
+
+    plt.figure(figsize=(8, 5))
+    markline, stemlines, baselline = plt.stem(
+        workers, speedup, 
+        linefmt='b-',
+        markerfmt='bo-',
+        basefmt='k-',
+        label='Measeured Speedup'
+    )
+
+    plt.setp(stemlines, linewidth=2)
+
+    plt.plot(workers, workers, 'r--', label='Ideal Speedup')
+
+    plt.xlabel("Number of Workers")
+    plt.ylabel("Speedup")
+    plt.title("Speedup vs Number of Workers", fontsize=14)
+
+    plt.grid(True)
+    plt.legend()
+    plt.show()
