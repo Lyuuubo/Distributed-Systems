@@ -1,11 +1,18 @@
 import pika
-import redis
+import argparse
 
 # Connect to RabbitMQ
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 
-queue_name = 'insult_filter_queue'
+parser = argparse.ArgumentParser()
+parser.add_argument('--queue', type=str, help='Queue where server listenning')
+
+args = parser.parse_args()  
+if args.queue is None:
+    queue_name = 'insult_filter_queue'
+else:
+    queue_name = args.queue
 
 # Declare new rabbit queue
 channel.queue_declare(queue=queue_name)
@@ -29,6 +36,6 @@ def callback(ch, method, properties, body):
 # Consume messages
 channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
-print("Consumer")
+print(f'Consumer: {queue_name}')
 print(' [*] Waiting for messages. To exit, press CTRL+C')
 channel.start_consuming()

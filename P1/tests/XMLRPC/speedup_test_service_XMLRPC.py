@@ -1,10 +1,8 @@
 import xmlrpc.client
 import multiprocessing
 import time
-import statistics
 import matplotlib.pyplot as plt
 from collections import deque
-import subprocess
 from pathlib import Path
 
 # We need active (active in order):
