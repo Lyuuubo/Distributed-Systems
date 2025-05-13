@@ -2,6 +2,7 @@ import pika
 import redis
 import time
 
+# Code to empy the rabbit queue used in Dynamic Scaling
 if __name__ == "__main__":
 
     # Connect to RabbitMQ

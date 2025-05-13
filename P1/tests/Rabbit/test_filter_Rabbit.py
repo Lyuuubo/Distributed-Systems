@@ -5,9 +5,9 @@ import time
 from collections import Counter
 
 # We need active:
-# - InsultFilter.py
+# - Rabbit/InsultFilter.py
 # or
-# - InsultFilter.py (2 or more)
+# - Rabbit/InsultFilter.py (2 or more)
 class TestFilterRabbit(unittest.TestCase):
     @classmethod
     def setUpClass(self):

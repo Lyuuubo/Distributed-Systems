@@ -5,10 +5,10 @@ import xmlrpc.client
 from collections import Counter
 
 # We need active (active in order):
-# - nNode/MasterService.py
-# - nNode/SlaveService (1 or more)
-# - nNode/BroadcastService
-# - nNode/s1.py (s2 and s3 also)
+# - XMLRPC/nNode/MasterService.py
+# - XMLRPC/nNode/SlaveService (1 or more)
+# - XMLRPC/nNode/BroadcastService
+# - XMLRPC/nNode/s1.py (s2 and s3 also)
 class TestServiceXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):

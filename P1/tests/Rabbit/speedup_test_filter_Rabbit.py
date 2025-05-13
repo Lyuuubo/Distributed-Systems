@@ -6,13 +6,13 @@ import subprocess
 from pathlib import Path
 
 # We need active (active in order):
-# - 1Node/InsultFilterTT.py
+# Any
 class StressTestService:
     def __init__(self):
         self.number_process = 1
         self.consumer_rate = []
-        self.requests = 100000
-        self.path_worker = Path(__file__).parent.parent.parent/'Rabbit'/'nNode'/'InsultFilterTT.py'
+        self.requests = 20000
+        self.path_worker = Path(__file__).parent.parent.parent/'Rabbit'/'InsultFilter.py'
 
     def send_insult(self, requests):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))

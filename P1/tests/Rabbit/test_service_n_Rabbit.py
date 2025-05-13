@@ -5,9 +5,9 @@ import time
 import redis
 
 # We need active:
-# - nNode/InsultService.py (1 or more)
-# - nNode/InsultBroadcaster.py
-# - Subscriber.py (1 or more)
+# - Rabbit/nNode/InsultService.py (1 or more)
+# - Rabbit/nNode/InsultBroadcaster.py
+# - Rabbit/Subscriber.py (1 or more)
 class TestServiceRabbit(unittest.TestCase):
     @classmethod
     def setUpClass(self):

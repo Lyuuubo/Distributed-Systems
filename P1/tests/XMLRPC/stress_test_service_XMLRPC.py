@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import threading
 
 # We need active (active in order):
-# - 1Node/InsultServiceLinux.py
+# - XMLRPC/1Node/InsultServiceLinux.py
 class StressTestService:
     def __init__(self):
         # Define data needed to do the test

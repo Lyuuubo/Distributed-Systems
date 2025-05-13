@@ -3,8 +3,8 @@ import xmlrpc.client
 from collections import Counter
 
 # We need active (active in order):
-# - nNode/MasterService.py
-# - nNode/InsultFilter.py (1 or more)
+# - XMLRPC/nNode/MasterService.py
+# - XMLRPC/nNode/InsultFilter.py (1 or more)
 class TestFilterXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):

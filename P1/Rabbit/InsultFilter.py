@@ -17,7 +17,6 @@ def callback(ch, method, properties, body):
     for insult in insults:
             if insult in text:
                 text = text.replace(insult, "CENSORED")
-                break
     #print(f" [x] Received {text}")
 
     # Return response to client

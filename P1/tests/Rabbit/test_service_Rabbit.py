@@ -4,8 +4,8 @@ import random
 import time
 
 # We need active:
-# - 1Node/InsultService.py
-# - Subscriber.py (1 or more)
+# - Rabbit/1Node/InsultService.py
+# - Rabbit/Subscriber.py (1 or more)
 class TestServiceRabbit(unittest.TestCase):
     @classmethod
     def setUpClass(self):

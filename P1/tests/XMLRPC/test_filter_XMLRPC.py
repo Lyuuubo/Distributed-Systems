@@ -3,7 +3,7 @@ import xmlrpc.client
 from collections import Counter
 
 # We need active:
-# - 1Node/InsultFilter.py
+# - XMLRPC/1Node/InsultFilter.py
 class TestFilterXMLRPC(unittest.TestCase):
     @classmethod
     def setUpClass(self):

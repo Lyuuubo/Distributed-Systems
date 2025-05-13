@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import threading
 
 # We need active (active in order):
-# - 1Node/InsultFilterTT.py
+# - Rabbit/InsultFilter.py
 class StressTestService:
     def __init__(self):
         self.number_process = 4
         self.consumer_rate = []
         self.time_stamp = []
-        self.requests = [1000, 2000, 5000, 10000, 20000, 50000, 100000]#, 50000, 100000, 200000, 500000]
+        self.requests = [1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
     def send_insult(self, requests, i):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))

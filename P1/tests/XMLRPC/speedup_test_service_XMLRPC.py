@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 
 # We need active (active in order):
-# - 1Node/InsultServiceLinux.py (3 terminals)
+# - XMLRPC/1Node/InsultServiceLinux.py (3 terminals)
 class StressTestService:
     def __init__(self):
         # Define data needed to do the test
@@ -18,14 +18,6 @@ class StressTestService:
         self.number_process = 4
         self.message_process = []
         self.requests = 50000
-        # path_worker = Path(__file__).parent.parent.parent/'XMLRPC'/'1Node'/'InsultServiceLinux.py'
-
-        # subprocess.Popen(['python', path_worker, '--port', '8001']
-        #                  ,stdout = subprocess.DEVNULL)
-        # subprocess.Popen(['python', path_worker, '--port', '8002']
-        #                  ,stdout = subprocess.DEVNULL)
-        # subprocess.Popen(['python', path_worker, '--port', '8003']
-        #                  ,stdout = subprocess.DEVNULL)
 
         for uri in list(self.uri):
             client = xmlrpc.client.ServerProxy(uri)
