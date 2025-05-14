@@ -23,7 +23,7 @@ class TestFilterRedis(unittest.TestCase):
         # We initialize the redis client that we will be using on the functional tests bellow
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
 
-        self.client.delete("insult_queue", "resolve_queue", "test_filter_queue", "petitions_queue1", "filter_queue2")
+        self.client.delete("insult_queue", "resolve_queue", "test_filter_queue", "petitions_queue", "filter_queue")
 
         time.sleep(1)
 
@@ -32,10 +32,10 @@ class TestFilterRedis(unittest.TestCase):
                 "operation" : "X1",
                 "data" : insult
             }
-            self.client.lpush("petitions_queue1", json.dumps(petition))
+            self.client.lpush("petitions_queue", json.dumps(petition))
 
         # We initialize the petition queue
-        self.filter_queue = "filter_queue2"
+        self.filter_queue = "filter_queue"
 
         # We initialize some petitions with the insults above
         self.petitions = [
