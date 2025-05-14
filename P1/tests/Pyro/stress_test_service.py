@@ -14,8 +14,8 @@ from matplotlib import pyplot as plt
 
 service_names = []
 insult_list = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
-number_petitions = [1000, 2000, 3000, 4000, 5000]
-max_cpu = 4
+number_petitions = [1000, 2000, 5000, 10000, 20000, 50000, 100000]
+max_cpu = 8
 ns = Pyro4.locateNS()
 
 # We initialize all the nodes for test (1, 2, 3)
