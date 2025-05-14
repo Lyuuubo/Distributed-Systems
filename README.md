@@ -33,12 +33,15 @@ pip3 install Pyro4
 ## Com executar els tests?
 
 En la carpeta de tests, disposem de tots els fitxers que s'han usat per provar el correcte funcionament dels serveis i els que s'han usat per fer l'stress test i la comparació de speedup. Al principi de tot, tenim comentats quins són els processos que han d'estar corrent abans d'executar el test (recomanable en una altra terminal):
+
 ![image](https://github.com/user-attachments/assets/ecb955ac-b856-4235-95ec-c036ade9897a)
 
 En aquest exemple, podem observar com per poder executar el test del InsultService de XMLRPC, necessitem tenir el Master, vàies instàncies de l'Slave, el Broadcast i 1 o vàries instàncies dels subscriptors.
 
 ## Comprovar el dynamic scaling
 
-Per realitzar una comprovació del dinàmic scaling, tenim dues opcions.
+Per realitzar una comprovació del dinàmic scaling, tenim dues opcions:
+
   1 - Executar en una terminal el dynamic/Main.py, en un o diversos terminals diferents el dynamic/Client.py i observar visualment a partir de la terminal com escala (segons el nombre de clients).
+  
   2 - Executar el dynamic/TestMaster.py el qual és un test que va enviant diferentes ràfagues devents a la cua i que finalment genera una gràfica amb els resultats.
