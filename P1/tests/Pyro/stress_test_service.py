@@ -9,24 +9,12 @@ from matplotlib import pyplot as plt
 # We need active:
 # - ActiceServer.py
 # - Static/InsultService.py 
-# - Dynamic/InsultMaster.py
-# - Dynamic/InsultSlaveService.py (3 instances)
 
 service_names = []
 insult_list = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
-number_petitions = [1000, 2000, 5000, 10000, 20000, 50000, 100000]
+number_petitions = [1]
 max_cpu = 8
 ns = Pyro4.locateNS()
-
-# We initialize all the nodes for test (1, 2, 3)
-def initialize_nodes(nodes):
-    service_names.clear()
-    if nodes > 1:
-        for i in range(nodes):
-            service_names.append("insult" + str(i + 1) + ".service")
-    else:
-        service_names.append("insult.service")
-    print(service_names)
 
 # We add all the insults in the service (it doesn't bother if its nNodes implementation cause we have a redis list with the insults)
 def initialize_insults():
@@ -35,11 +23,15 @@ def initialize_insults():
         server = Pyro4.Proxy(uri)
         server.add_insult(insult)
 
+# We initialize all the nodes for test 
+def initialize_nodes():
+    service_names.clear()
+    service_names.append("insult.service")
+
 # We retrieve insults for all the number of petitions that the client indicates
-def insult_getter(number_petitions, counter, block, references):
-    service_rr = cycle(references)
+def insult_getter(number_petitions, counter, block, reference):
     while counter.value < number_petitions:
-        Pyro4.Proxy(next(service_rr)).random_choice()
+        Pyro4.Proxy(reference).random_choice()
         with block:
             counter.value += 1
     
@@ -67,28 +59,24 @@ def run_tests(number_petitions, number_process):
     return elapsed
 
 if __name__ == "__main__":
-    
-    nodes = 3
 
     results = {}
 
     # We run the tests
+    initialize_nodes()
 
-    for service in range(nodes):
+    print(service_names)
 
-        # We initialize the namespaces for the insult servers
-        initialize_nodes(service + 1)
+    # We initialize the insult list for all the insult servers defined
+    initialize_insults()
+    
+    # We define a list for each service
+    results = []
 
-         # We initialize the insult list for all the insult servers defined
-        initialize_insults()
-        
-        # We define a list for each service
-        results[service] = []
-
-        for petition in number_petitions:
-            print(f"Testing for {service + 1} node(s) and {petition} petitions...")
-            time_elapsed = run_tests(petition, max_cpu)
-            results[service].append(time_elapsed)
+    for petition in number_petitions:
+        print(f"Testing fo node(s) and {petition} petitions...")
+        time_elapsed = run_tests(petition, max_cpu)
+        results.append(time_elapsed)
 
     for i in range(3):
         plt.plot(number_petitions, results[i], label=f"{i + 1} Nodes")
@@ -99,28 +87,4 @@ if __name__ == "__main__":
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
-
-    speedup = [1, results[0][4] / results[1][4], results[0][4] / results[2][4]]
-    workers = [1, 2, 3]
-
-    plt.figure(figsize=(8, 5))
-    markline, stemlines, baselline = plt.stem(
-        workers, speedup, 
-        linefmt='b-',
-        markerfmt='bo-',
-        basefmt='k-',
-        label='Measeured Speedup'
-    )
-
-    plt.setp(stemlines, linewidth=2)
-
-    plt.plot(workers, workers, 'r--', label='Ideal Speedup')
-
-    plt.xlabel("Number of Workers")
-    plt.ylabel("Speedup")
-    plt.title("Speedup vs Number of Workers", fontsize=14)
-
-    plt.grid(True)
-    plt.legend()
     plt.show()
