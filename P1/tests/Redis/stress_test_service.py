@@ -74,7 +74,7 @@ if __name__ == "__main__":
         client.set("number_pushes", 0)
         print(f"Testing for 1 node and {petition} petitions...")
         time_elapsed = run_tests(petition, max_cpu)
-        results.append(time_elapsed)
+        results.append(petition / time_elapsed)
 
     plt.plot(number_petitions, results, 'b-', label='Real')
     
