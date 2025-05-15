@@ -27,7 +27,7 @@ class StressTestService:
         for _ in range(requests):
             uri = servers.popleft()
             client = xmlrpc.client.ServerProxy(uri)
-            client.get_insults()
+            client.insult_me()
             servers.append(uri)
 
     def run_test(self, num_p, request, num_servers):
