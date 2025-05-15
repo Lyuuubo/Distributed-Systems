@@ -22,23 +22,20 @@ def initialize_insults():
         server.add_insult(insult)
 
 # We retrieve insults for all the number of petitions that the client indicates
-def insult_getter(number_petitions, counter, block, reference):
+def insult_getter(number_petitions, reference):
+    prox =  Pyro4.Proxy(reference)
     for _ in range(number_petitions):
-        Pyro4.Proxy(reference).random_choice()
-        with block:
-            counter.value += 1
+        prox.random_choice()
     
 # We define a function to do the testing
 def run_tests(number_petitions, number_process):
-    counter = multiprocessing.Value('i', 0)
-    block = multiprocessing.Lock()
     process = []
     references = ns.lookup(service_name)
 
     start = time.time()
 
     for _ in range(number_process):  
-        p = multiprocessing.Process(target=insult_getter, args=(number_petitions, counter, block, references))
+        p = multiprocessing.Process(target=insult_getter, args=(number_petitions, references))
         process.append(p)
     
     for p in process:
@@ -68,7 +65,7 @@ if __name__ == "__main__":
     for petition in number_petitions:
         print(f"Testing fo node(s) and {petition} petitions...")
         time_elapsed = run_tests(petition, max_cpu)
-        results.append(time_elapsed)
+        results.append(petition/time_elapsed)
 
     print(results)
 
