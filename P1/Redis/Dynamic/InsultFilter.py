@@ -36,6 +36,7 @@ class InsultFilter:
     
 filter = InsultFilter()
 print("Waiting for petitions to be filtered")
+print(filter.filter_queue)
 while True:
     _, raw_data = filter.client.brpop(filter.filter_queue, timeout=0)
     print("Petition recieved")

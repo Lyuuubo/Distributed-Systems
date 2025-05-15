@@ -70,7 +70,7 @@ class TestFilterRedis(unittest.TestCase):
             self.client.lpush(self.filter_queue, json.dumps(petition))
 
     def test_2_consume_work(self):
-        for i in range(len(self.resolutions)):
+        for _ in range(len(self.resolutions)):
             petition = {
                "operation" : "X2",
                 "data" : ""

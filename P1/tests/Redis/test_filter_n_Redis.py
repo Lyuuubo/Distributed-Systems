@@ -84,7 +84,9 @@ class TestFilterRedis(unittest.TestCase):
         }
         self.client.lpush(self.filter_queue, json.dumps(petition))
         time.sleep(1)
+        print(self.resolutions)
         resolutions = self.client.lrange("test_filter_queue", 0, -1)
+        print(resolutions)
         assert Counter(resolutions) == Counter(self.resolutions)
         self.client.delete("test_filter_queue")
         
