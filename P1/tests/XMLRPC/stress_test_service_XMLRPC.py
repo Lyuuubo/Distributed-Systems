@@ -58,8 +58,7 @@ if __name__ == '__main__':
     test.do_tests()
 
     plt.figure(figsize=(8, 4))
-    plt.plot(test.number_process, test.estimated, 'r-', label='Estimated')
-    plt.plot(test.number_process, test.message_process, 'b-', label='Real')
+    plt.plot(test.requests, test.message_process, 'b-', label='Real')
     plt.xlabel('Clients')
     plt.ylabel('Messages')
     plt.title('Stress Test XMLRPC')

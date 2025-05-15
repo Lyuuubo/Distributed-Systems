@@ -5,8 +5,7 @@ class InsultFilter:
     
     def __init__(self):
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
-        self.instance_id = self.client.incr("insult_service_instance_id")
-        self.filter_queue = f"filter_queue{self.instance_id}"
+        self.filter_queue = f"filter_queue"
         self.petition_queue = "petition_queue"
         self.resolve_queue = "resolve_queue"
     

@@ -76,7 +76,7 @@ class StressTestService:
         for servers in range(3):
             queue = queues.pop(0)
             print(queue)
-            proc = subprocess.Popen(['python', self.path_worker, '--queue', queue]
+            proc = subprocess.Popen(['python3', self.path_worker, '--queue', queue]
                                     ,stdout = subprocess.DEVNULL)
             procs.append(proc)
             time.sleep(2)

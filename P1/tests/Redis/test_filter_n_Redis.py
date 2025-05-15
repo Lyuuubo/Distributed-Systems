@@ -23,7 +23,7 @@ class TestFilterRedis(unittest.TestCase):
         # We initialize the redis client that we will be using on the functional tests bellow
         self.client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
 
-        self.client.delete("insult_queue", "resolve_queue", "test_filter_queue", "petitions_queue", "filter_queue")
+        self.client.delete("insult_queue", "resolve_queue", "test_filter_queue", "petitions_queue1", "filter_queue2")
 
         time.sleep(1)
 
@@ -32,10 +32,10 @@ class TestFilterRedis(unittest.TestCase):
                 "operation" : "X1",
                 "data" : insult
             }
-            self.client.lpush("petitions_queue", json.dumps(petition))
+            self.client.lpush("petitions_queue1", json.dumps(petition))
 
         # We initialize the petition queue
-        self.filter_queue = "filter_queue"
+        self.filter_queue = "filter_queue2"
 
         # We initialize some petitions with the insults above
         self.petitions = [
@@ -70,7 +70,7 @@ class TestFilterRedis(unittest.TestCase):
             self.client.lpush(self.filter_queue, json.dumps(petition))
 
     def test_2_consume_work(self):
-        for _ in range(len(self.resolutions)):
+        for i in range(len(self.resolutions)):
             petition = {
                "operation" : "X2",
                 "data" : ""
@@ -84,7 +84,9 @@ class TestFilterRedis(unittest.TestCase):
         }
         self.client.lpush(self.filter_queue, json.dumps(petition))
         time.sleep(1)
+        print(self.resolutions)
         resolutions = self.client.lrange("test_filter_queue", 0, -1)
+        print(resolutions)
         assert Counter(resolutions) == Counter(self.resolutions)
         self.client.delete("test_filter_queue")
         

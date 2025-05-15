@@ -61,7 +61,7 @@ class InsultService:
             if self.subscribers and self.insults:
                 for subscriber in self.subscribers:
                     sub = Pyro4.Proxy("PYRONAME:"+subscriber)
-                    print(f"Insult sent {sub.notify(self.random_insult())}")
+                    print(f"Insult sent {sub.notify(self.random_choice())}")
             time.sleep(5)
 
     def kill_random_events(self):
