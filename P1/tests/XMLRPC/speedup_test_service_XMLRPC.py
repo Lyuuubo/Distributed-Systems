@@ -11,11 +11,11 @@ class StressTestService:
     def __init__(self):
         # Define data needed to do the test
         print("Prepare environment")
-        self.uri = deque(['http://localhost:8001','http://localhost:8002','http://localhost:8003'])
+        self.uri = deque(['http://localhost:8002','http://localhost:8003','http://localhost:8004'])
 
         self.number_process = 4
         self.message_process = []
-        self.requests = 50000
+        self.requests = 100000
 
         for uri in list(self.uri):
             client = xmlrpc.client.ServerProxy(uri)
@@ -62,9 +62,9 @@ class StressTestService:
     def do_tests(self):
         for servers in range(3):
             self.run_test(self.number_process, self.requests, servers)
-        for uri in list(self.uri):
-            client = xmlrpc.client.ServerProxy(uri)
-            client.reset()
+        # for uri in list(self.uri):
+        #     client = xmlrpc.client.ServerProxy(uri)
+        #     client.reset()
 
 if __name__ == '__main__':
     test = StressTestService()

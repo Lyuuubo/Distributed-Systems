@@ -6,24 +6,14 @@ import random
 from itertools import cycle
 from matplotlib import pyplot as plt
 
-# Before testing:
-# - CleanIdentifier.py
-
 # We need active:
-# - InsultService.py (3 instances)
+# - Static/InsultService.py
 
 client = redis.Redis(host='localhost', port = 6379, db = 0, decode_responses = True)
-service_queues = []
+service_queues = "petitions_queue"
 insult_list = ["idiota", "inútil", "tonto", "imbécil", "patán", "pesado", "torpe", "payaso", "estúpido", "malcriado"]
-number_petitions = [1000, 2000, 3000, 4000, 5000]
+number_petitions = [1000, 2000, 5000, 10000, 50000, 100000, 500000]
 max_cpu = 4
-
-def petition_queues(nodes):
-    service_queues.clear()
-    for i in range(nodes):
-       service_queues.append("petitions_queue" + str(i + 1))
-
-    print(service_queues)
 
 def initialize_insults():
     client.ltrim("insult_queue", 1, 0)
@@ -36,13 +26,12 @@ def initialize_insults():
 
 # We retrieve insults for all the number of petitions that the client indicates
 def spam__void_petitions(number_petitions):
-    service_rr = cycle(service_queues)
     petition = {
         "operation" : "X5",
         "data" : ""
     }
     for _ in range(number_petitions):
-        client.lpush(next(service_rr), json.dumps(petition))
+        client.lpush(service_queues, json.dumps(petition))
         client.incr("number_pushes")
 
 # We define a function to do the testing
@@ -79,20 +68,15 @@ if __name__ == "__main__":
     for i in range(nodes):
         client.delete(f"petitions_queue{i + 1}")
 
-    results = {}
+    results = []
 
-    for service in range(nodes):
-        petition_queues(service + 1)
-        initialize_insults()
-        results[service] = []
-        for petition in number_petitions:
-            client.set("number_pushes", 0)
-            print(f"Testing for {service + 1} node(s) and {petition} petitions...")
-            time_elapsed = run_tests(petition, max_cpu)
-            results[service].append(time_elapsed)
+    for petition in number_petitions:
+        client.set("number_pushes", 0)
+        print(f"Testing for 1 node and {petition} petitions...")
+        time_elapsed = run_tests(petition, max_cpu)
+        results.append(time_elapsed)
 
-    for i in range(3):
-        plt.plot(number_petitions, results[i], label=f"{i + 1} Nodes")
+    plt.plot(number_petitions, results, 'b-', label='Real')
     
     plt.xlabel("Petitions")
     plt.ylabel("Time")
@@ -100,28 +84,4 @@ if __name__ == "__main__":
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
-
-    speedup = [1, results[0][4] / results[1][4], results[0][4] / results[2][4]]
-    workers = [1, 2, 3]
-
-    plt.figure(figsize=(8, 5))
-    markline, stemlines, baselline = plt.stem(
-        workers, speedup, 
-        linefmt='b-',
-        markerfmt='bo-',
-        basefmt='k-',
-        label='Measeured Speedup'
-    )
-
-    plt.setp(stemlines, linewidth=2)
-
-    plt.plot(workers, workers, 'r--', label='Ideal Speedup')
-
-    plt.xlabel("Number of Workers")
-    plt.ylabel("Speedup")
-    plt.title("Speedup vs Number of Workers", fontsize=14)
-
-    plt.grid(True)
-    plt.legend()
     plt.show()
