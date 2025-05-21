@@ -12,11 +12,11 @@ class StressTestService:
     def __init__(self):
         self.number_process = 3
         self.consumer_rate = []
-        self.filter_queues = ["filter_work1","filter_work2","filter_work3"]
-        self.requests = 100000
+        #self.filter_queues = ["filter_work1","filter_work2","filter_work3"]
+        self.requests = 10000
         self.path_worker = Path(__file__).parent.parent.parent/'Rabbit'/'InsultFilter.py'
 
-    def send_insult(self, requests, list_queues):
+    def send_insult(self, requests):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         # Declare a queue
@@ -25,10 +25,11 @@ class StressTestService:
         # Declare response queue
         response = channel.queue_declare(queue='')
         response_queue = response.method.queue
+        queue = 'insult_filter_queue'
 
         for _ in range(requests):
-            queue =  list_queues.pop(0)
-            list_queues.append(queue)
+            #queue =  list_queues.pop(0)
+            #list_queues.append(queue)
             channel.basic_publish(exchange='', 
                                 routing_key=queue,
                                 properties=pika.BasicProperties(reply_to=response_queue),
@@ -45,15 +46,15 @@ class StressTestService:
     def run_test(self, request, num_servers):
         print(f"Test-> {num_servers+1} servers: {request} requests")
         procs = []
-        if num_servers == 0:
-            list_queue = [self.filter_queues[0]]
-        elif num_servers == 1:
-            list_queue = [self.filter_queues[0], self.filter_queues[1]]
-        else:
-            list_queue = self.filter_queues
+        # if num_servers == 0:
+        #     list_queue = [self.filter_queues[0]]
+        # elif num_servers == 1:
+        #     list_queue = [self.filter_queues[0], self.filter_queues[1]]
+        # else:
+        #     list_queue = self.filter_queues
 
         for _ in range(self.number_process):
-            p = multiprocessing.Process(target=self.send_insult, args=(request, list_queue.copy(),))
+            p = multiprocessing.Process(target=self.send_insult, args=(request,))
             procs.append(p)
 
         start = time.time()
@@ -72,12 +73,12 @@ class StressTestService:
 
     def do_tests(self):
         procs = []
-        queues = list(self.filter_queues)
+        #queues = list(self.filter_queues)
         for servers in range(3):
-            queue = queues.pop(0)
-            print(queue)
-            proc = subprocess.Popen(['python3', self.path_worker, '--queue', queue]
-                                    ,stdout = subprocess.DEVNULL)
+            # queue = queues.pop(0)
+            # print(queue)
+            proc = subprocess.Popen(['python3', self.path_worker],#@, '--queue', queue]
+                                    stdout = subprocess.DEVNULL)
             procs.append(proc)
             time.sleep(2)
             self.run_test(self.requests, servers)

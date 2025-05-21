@@ -1,5 +1,6 @@
 import pika
 import argparse
+import time
 
 # Connect to RabbitMQ
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -25,6 +26,7 @@ def callback(ch, method, properties, body):
             if insult in text:
                 text = text.replace(insult, "CENSORED")
     #print(f" [x] Received {text}")
+    time.sleep(0.005)
 
     # Return response to client
     ch.basic_publish(
