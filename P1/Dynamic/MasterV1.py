@@ -56,7 +56,7 @@ class Master:
             for _ in range(workers_need-self.num_workers):
                 # Start new worker
                 if self.num_workers <= num_max:
-                    proc = subprocess.Popen(["python", self.path_worker],
+                    proc = subprocess.Popen(["python3", self.path_worker],
                                             stdout = subprocess.DEVNULL)
                     self.id_workers.append(proc)
                     self.num_workers = self.num_workers + 1 
